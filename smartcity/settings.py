@@ -58,7 +58,7 @@ ROOT_URLCONF = 'smartcity.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['playground/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
