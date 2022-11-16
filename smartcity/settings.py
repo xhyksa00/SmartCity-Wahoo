@@ -77,14 +77,23 @@ WSGI_APPLICATION = 'smartcity.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'defaultdb',
-        'USER': 'django-app',
-        'PASSWORD': 'AVNS_pREpkiTc-CDZGQBePhS',
-        'HOST':'db-mysql-fra1-iis-smartcity-do-user-12873598-0.b.db.ondigitalocean.com',
-        'PORT':'25060',
-        'OPTIONS': {'ssl': {'ca': '/home/rudolf-unix/SmartCity-Wahoo/ca-certificate.crt'}}
+        'NAME': 'heroku_d5d91343bbf92f1',
+        'USER': 'bad8874b568038',
+        'PASSWORD': '35f7f640',
+        'HOST':'us-cdbr-east-06.cleardb.net'
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'defaultdb',
+#         'USER': 'django-app',
+#         'PASSWORD': 'AVNS_pREpkiTc-CDZGQBePhS',
+#         'HOST':'db-mysql-fra1-iis-smartcity-do-user-12873598-0.b.db.ondigitalocean.com',
+#         'PORT':'25060',
+#         'OPTIONS': {'ssl': {'ca': '/home/rudolf-unix/SmartCity-Wahoo/ca-certificate.crt'}}
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
