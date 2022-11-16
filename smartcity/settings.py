@@ -24,9 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ['DEBUG']
 
-ALLOWED_HOSTS = ['smartcity-wahoo.herokuapp.com']
+ALLOWED_HOSTS = [
+    'smartcity-wahoo.herokuapp.com',
+    '127.0.0.1'
+]
 
 
 # Application definition
@@ -77,10 +80,11 @@ WSGI_APPLICATION = 'smartcity.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'heroku_d5d91343bbf92f1',
-        'USER': 'bad8874b568038',
-        'PASSWORD': '35f7f640',
-        'HOST':'us-cdbr-east-06.cleardb.net'
+        'NAME': os.environ['DATABASE_NAME'],
+        'USER': os.environ['DATABASE_USER'],
+        'PASSWORD': os.environ['DATABASE_PASSWORD'],
+        'PORT':'3306',
+        'HOST':'sm9j2j5q6c8bpgyq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com'
     }
 }
 # DATABASES = {
