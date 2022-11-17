@@ -13,9 +13,9 @@ def login(request):
         if form.is_valid():
             pwd = form.cleaned_data['password'].encode('utf8')
             email = form.cleaned_data['email']
-            context = { 'name': email }
             if ( checkpw(pwd, desiredpwd) ):
-                return render(request,'hello.html', context=context)
+                request.session['email'] = email
+                return HttpResponseRedirect('/hello/')
             else:
                 return HttpResponse("Access denised.")
 
@@ -25,7 +25,6 @@ def login(request):
     return render(request, 'user/login.html', context=context)
 
 def register(request):
-
     context = {'pwdFail' : False,
     'emailTaken': False}
     if request.method == 'POST':
@@ -52,3 +51,10 @@ def register(request):
 
 def registerConfirmation(request):
     return render(request,'user/registerConfiramtion.html')
+
+def sayHello(request):
+    if 'email' in request.session:
+        email = request.session['email']
+    else:
+        email = ''
+    return render(request,'hello.html',{'name' : email})
