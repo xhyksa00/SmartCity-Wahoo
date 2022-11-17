@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="position-absolute top-50 start-50 translate-middle p-5 rounded color-block bg-info bg-gradient" >
+    <form action="." method="POST">
+        {% csrf_token %}
+        <label for="id_name" class="form-label">E-mail:</label>
+        <br>
+        <input type="text" name="email" maxlength="50" required="true" id="id_email" class="form-control">
+        <br>
+        <label for="id_password" class="form-label">Password:</label>
+        <br>
+        <input type="password" name="password" maxlength="50" required="true" id="id_password" class="form-control">
+        <br>
+        <div class="pe-2 col text-center">
+            <button type="submit" class="btn btn-primary end-50">Submit</button>
+        </div>
+        </form>
+
+        <div class= "col text-center" >
+            <a href="https://www.w3schools.com">
+                Don't have an account? <br> Register.
+            </a>
+        </div>
+</div>
+
+{% endblock content %}
+
+
