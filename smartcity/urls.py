@@ -16,11 +16,11 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-# from testapp import views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('testapp/', include('testapp.urls')),
     path('__debug__/', include('debug_toolbar.urls')),
-    path('playground/', include('playground.urls'))
+    path('playground/', include('playground.urls')),
+    path('', include('smartcity_app.urls'))
 ]
