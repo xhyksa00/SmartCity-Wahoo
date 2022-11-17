@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="position-absolute top-50 start-50 translate-middle rounded color-block bg-info bg-gradient" >
+
+    <a href="/user/login" class="m-2"> &lt;Back to login</a>
+
+    <div class="m-4">
+    {% if pwdFail%}
+        <p class="text-danger bold">
+            <b>Please enter maching passwords.</b>
+        </p>
+    {% endif %}
+    {% if emailTaken%}
+        <p class="text-danger bold">
+            <b>Account with this e-mail adress already exists.</b>
+        </p>
+    {% endif %}
+    
+
+        <form action="." method="POST">
+            {% csrf_token %}
+            <label for="id_first_name" class="form-label">First name:</label>
+            <br>
+            <input type="text" name="first_name" maxlength="50" required="true" id="id_first_name" class="form-control">
+            <br>
+            <label for="id_surname" class="form-label">Surname:</label>
+            <br>
+            <input type="tetx" name="surname" maxlength="50" required="true" id="id_surname" class="form-control">
+            <br>
+            <label for="id_email" class="form-label">E-mail:</label>
+            <br>
+            <input type="email" name="email" maxlength="50" required="true" id="id_email" class="form-control">
+            <br>
+            <label for="id_password" class="form-label">Password</label>
+            <br>
+            <input type="password" name="password" maxlength="50" required="true" id="id_password" class="form-control">
+            <br>
+            <label for="id_password_repeat" class="form-label">Confirm password:</label>
+            <br>
+            <input type="password" name="password_repeat" maxlength="50" required="true" id="id_password_repeat" class="form-control">
+            <br>
+            <div class="pe-2 col text-center">
+                <button type="submit" class="btn btn-primary end-50">Register</button>
+            </div>
+        </form>
+    </div>
+
+        
+        
+    </div>
+
+{% endblock content %}
