@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'debug_toolbar',
     'smartcity_app'
-    # 'testapp',
 ]
 
 MIDDLEWARE = [
@@ -93,20 +92,12 @@ DATABASES = {
         'USER': os.environ['DATABASE_USER'],
         'PASSWORD': os.environ['DATABASE_PASSWORD'],
         'PORT':'3306',
-        'HOST':'sm9j2j5q6c8bpgyq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com'
+        'HOST':'sm9j2j5q6c8bpgyq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
     }
 }
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'defaultdb',
-#         'USER': 'django-app',
-#         'PASSWORD': 'AVNS_pREpkiTc-CDZGQBePhS',
-#         'HOST':'db-mysql-fra1-iis-smartcity-do-user-12873598-0.b.db.ondigitalocean.com',
-#         'PORT':'25060',
-#         'OPTIONS': {'ssl': {'ca': '/home/rudolf-unix/SmartCity-Wahoo/ca-certificate.crt'}}
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
