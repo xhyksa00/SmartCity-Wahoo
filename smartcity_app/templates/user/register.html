@@ -8,9 +8,12 @@
 
     <div class="m-4">
     {% if pwdFail%}
+    <div>
+
         <p class="text-danger bold">
             <b>Please enter maching passwords.</b>
         </p>
+    </div>
     {% endif %}
     {% if emailTaken%}
         <p class="text-danger bold">
@@ -23,15 +26,15 @@
             {% csrf_token %}
             <label for="id_first_name" class="form-label">First name:</label>
             <br>
-            <input type="text" name="first_name" maxlength="50" required="true" id="id_first_name" class="form-control">
+            <input type="text" name="first_name" maxlength="50" required="true" id="id_first_name" class="form-control" value={{first_name}}>
             <br>
             <label for="id_surname" class="form-label">Surname:</label>
             <br>
-            <input type="tetx" name="surname" maxlength="50" required="true" id="id_surname" class="form-control">
+            <input type="tetx" name="surname" maxlength="50" required="true" id="id_surname" class="form-control" value={{surname}}>
             <br>
             <label for="id_email" class="form-label">E-mail:</label>
             <br>
-            <input type="email" name="email" maxlength="50" required="true" id="id_email" class="form-control">
+            <input type="email" name="email" maxlength="50" required="true" id="id_email" class="form-control" value={{email}}>
             <br>
             <label for="id_password" class="form-label">Password</label>
             <br>

@@ -43,9 +43,12 @@ def register(request):
             'emailTaken' : False
             }
             if( pwd == pwd_repeat):
-                return HttpResponseRedirect('/user/login')
+                return HttpResponseRedirect('/user/registerConfiramtion')
             else :
                 context['pwdFail']  = True
                 return render(request, 'user/register.html', context)
     else:
         return render(request, 'user/register.html', context=context)
+
+def registerConfirmation(request):
+    return render(request,'user/registerConfiramtion.html')
