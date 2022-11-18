@@ -1,5 +1,5 @@
 from django.urls import path
-from .Views import user_views
+from .views import user_views, tickets_views
 
 
 userUrls = [
@@ -8,5 +8,9 @@ userUrls = [
     path('user/registerConfiramtion/', user_views.registerConfirmation)
     ]
 
+ticketsUrls = [
+    path('tickets/list', tickets_views.list_tickets)
+]
+
 #URLConf
-urlpatterns = userUrls
+urlpatterns = userUrls + ticketsUrls
