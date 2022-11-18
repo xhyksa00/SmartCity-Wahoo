@@ -8,26 +8,25 @@ from bcrypt import hashpw,gensalt,checkpw
 def login(request):
     desiredpwd = '$2b$12$GekvU9FMIs0/8sSWTLAEYeyrCQvmFFQbF.9AttkZQsY6yMmqLrQw.'.encode('utf8')
 
+    
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             pwd = form.cleaned_data['password'].encode('utf8')
             email = form.cleaned_data['email']
-            context = { 'name': email }
             if ( checkpw(pwd, desiredpwd) ):
-                return render(request,'hello.html', context=context)
+                request.session['email'] = email
+                return HttpResponseRedirect('/hello/')
             else:
-                return HttpResponse("Access denised.")
+                
+                return render(request, 'user/login.html') 
 
     else:
-        form = LoginForm()
-        context = {'form' : form}
-    return render(request, 'user/login.html', context=context)
+        context = {'form' : LoginForm(),
+        'login_fail': False}
+        return render(request, 'user/login.html', context=context)
 
 def register(request):
-
-    context = {'pwdFail' : False,
-    'emailTaken': False}
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -35,20 +34,29 @@ def register(request):
             name = form.cleaned_data['first_name']
             surname = form.cleaned_data['surname']
             pwd = form.cleaned_data['password']
-            pwd_repeat = form.cleaned_data['password_repeat']
+            pwd_confirm = form.cleaned_data['confirm_password']
             context = { 'email' : email,
-            'first_name' : name,
-            'surname' : surname,
+            'form' : form,
             'pwdFail' : False,
             'emailTaken' : False
             }
-            if( pwd == pwd_repeat):
+            if( pwd == pwd_confirm):
                 return HttpResponseRedirect('/user/registerConfiramtion')
-            else :
+            else:
                 context['pwdFail']  = True
                 return render(request, 'user/register.html', context)
     else:
+        context = {'pwdFail' : False,
+        'emailTaken': False,
+        'form' : RegisterForm()}
         return render(request, 'user/register.html', context=context)
 
 def registerConfirmation(request):
     return render(request,'user/registerConfiramtion.html')
+
+def sayHello(request):
+    if 'email' in request.session:
+        email = request.session['email']
+    else:
+        email = ''
+    return render(request,'hello.html',{'name' : email})
