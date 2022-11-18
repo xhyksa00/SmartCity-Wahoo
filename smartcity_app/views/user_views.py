@@ -1,29 +1,41 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect,HttpResponseBadRequest
 from ..forms.user_forms import LoginForm, RegisterForm
 from bcrypt import hashpw,gensalt,checkpw
+from ..models import LoginInfo
 
 # Create your views here.
 
 def login(request):
-    desiredpwd = '$2b$12$GekvU9FMIs0/8sSWTLAEYeyrCQvmFFQbF.9AttkZQsY6yMmqLrQw.'.encode('utf8')
-
-    
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            pwd = form.cleaned_data['password'].encode('utf8')
             email = form.cleaned_data['email']
-            if ( checkpw(pwd, desiredpwd) ):
-                request.session['email'] = email
+            pwd = form.cleaned_data['password']
+
+            loginData = LoginInfo.objects.filter(email = email)
+            # loginData = []
+            if(len(loginData) == 0):
+                return HttpResponse("NO")
+            else:
+                return HttpResponse("YES")
+
+            if (checkpw(pwd.encode('utf8'), loginData.password.encode('utf8')) ):
+                request.session['userId'] = loginData.user
                 return HttpResponseRedirect('/hello/')
             else:
-                
-                return render(request, 'user/login.html') 
-
+                context = {
+                    'form' : form,
+                    'login_fail': True
+                }
+                return render(request, 'user/login.html')
+        else:
+            return HttpResponseBadRequest()
     else:
-        context = {'form' : LoginForm(),
-        'login_fail': False}
+        context = {
+            'form' : LoginForm(),
+            'login_fail': False
+        }
         return render(request, 'user/login.html', context=context)
 
 def register(request):
@@ -55,8 +67,8 @@ def registerConfirmation(request):
     return render(request,'user/registerConfiramtion.html')
 
 def sayHello(request):
-    if 'email' in request.session:
-        email = request.session['email']
+    if 'userId' in request.session:
+        email = request.session['userId']
     else:
         email = ''
     return render(request,'hello.html',{'name' : email})
