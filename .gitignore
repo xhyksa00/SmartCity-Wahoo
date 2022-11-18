@@ -130,6 +130,5 @@ dmypy.json
 
 #Own
 .idea/
-static/
 tmp*
 .vscode
