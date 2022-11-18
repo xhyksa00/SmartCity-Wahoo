@@ -124,7 +124,7 @@ class DjangoSession(models.Model):
 
 class Images(models.Model):
     name = models.CharField(primary_key=True, max_length=50)
-    ticket = models.ForeignKey('Ticket', models.DO_NOTHING, blank=True, null=True)
+    ticketid = models.ForeignKey('Ticket', models.DO_NOTHING, db_column='ticketId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -132,7 +132,7 @@ class Images(models.Model):
 
 
 class LoginInfo(models.Model):
-    user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
+    userid = models.ForeignKey('User', models.DO_NOTHING, db_column='userId', blank=True, null=True)  # Field name made lowercase.
     email = models.CharField(max_length=50)
     password = models.CharField(max_length=100)
 
@@ -148,8 +148,8 @@ class ServiceRequest(models.Model):
     price = models.IntegerField(blank=True, null=True)
     priority = models.CharField(max_length=7, blank=True, null=True)
     state = models.CharField(max_length=10, blank=True, null=True)
-    technician = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True, related_name='request_technician')
-    author = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True, related_name='request_author')
+    technicianid = models.ForeignKey('User', models.DO_NOTHING, db_column='technicianId', blank=True, null=True, related_name='request_technician')  # Field name made lowercase.
+    authorid = models.ForeignKey('User', models.DO_NOTHING, db_column='authorId', blank=True, null=True, related_name='request_author')  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -159,9 +159,9 @@ class ServiceRequest(models.Model):
 class ServiceRequestComments(models.Model):
     text = models.CharField(max_length=255, blank=True, null=True)
     created_timestamp = models.DateTimeField(blank=True, null=True)
-    ticket = models.ForeignKey('Ticket', models.DO_NOTHING, blank=True, null=True)
-    author = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
-    request = models.ForeignKey(ServiceRequest, models.DO_NOTHING, blank=True, null=True)
+    ticketid = models.ForeignKey('Ticket', models.DO_NOTHING, db_column='ticketId', blank=True, null=True)  # Field name made lowercase.
+    authorid = models.ForeignKey('User', models.DO_NOTHING, db_column='authorId', blank=True, null=True)  # Field name made lowercase.
+    requestid = models.ForeignKey(ServiceRequest, models.DO_NOTHING, db_column='requestId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -174,7 +174,7 @@ class Ticket(models.Model):
     state = models.CharField(max_length=13, blank=True, null=True)
     created_timestamp = models.DateTimeField(blank=True, null=True)
     priority = models.CharField(max_length=7, blank=True, null=True)
-    author = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
+    authorid = models.ForeignKey('User', models.DO_NOTHING, db_column='authorId', blank=True, null=True)  # Field name made lowercase.
     service_request = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -185,8 +185,8 @@ class Ticket(models.Model):
 class TicketComments(models.Model):
     text = models.CharField(max_length=255, blank=True, null=True)
     created_timestamp = models.DateTimeField(blank=True, null=True)
-    ticket = models.ForeignKey(Ticket, models.DO_NOTHING, blank=True, null=True)
-    author = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
+    ticketid = models.ForeignKey(Ticket, models.DO_NOTHING, db_column='ticketId', blank=True, null=True)  # Field name made lowercase.
+    authorid = models.ForeignKey('User', models.DO_NOTHING, db_column='authorId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
