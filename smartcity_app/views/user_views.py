@@ -3,6 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect,HttpResponseBadReques
 from ..forms.user_forms import LoginForm, RegisterForm
 from bcrypt import hashpw,gensalt,checkpw
 from ..models import LoginInfo
+from django.contrib import messages
+
 
 # Create your views here.
 
@@ -14,13 +16,8 @@ def login(request):
             pwd = form.cleaned_data['password']
 
             loginData = LoginInfo.objects.filter(email = email)
-            # loginData = []
-            if(len(loginData) == 0):
-                return HttpResponse("NO")
-            else:
-                return HttpResponse("YES")
-
-            if (checkpw(pwd.encode('utf8'), loginData.password.encode('utf8')) ):
+            
+            if ( loginData and checkpw(pwd.encode('utf8'), loginData.password.encode('utf8')) ):
                 request.session['userId'] = loginData.user
                 return HttpResponseRedirect('/hello/')
             else:
@@ -53,6 +50,8 @@ def register(request):
             'emailTaken' : False
             }
             if( pwd == pwd_confirm):
+                messages.info(request, "LOL")
+                #messages.add_message(request, messages.INFO, 'Hello world.')
                 return HttpResponseRedirect('/user/registerConfiramtion')
             else:
                 context['pwdFail']  = True
