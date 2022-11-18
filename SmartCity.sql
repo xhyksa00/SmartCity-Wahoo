@@ -30,8 +30,8 @@ CREATE TABLE ticket (
         state IN ('open','waiting','inProgress','cls-denied','cls-fixed','cls-duplicate')),
     created_timestamp TIMESTAMP DEFAULT current_timestamp,
     priority  VARCHAR(7) CHECK( priority IN ('lowest','low','regular','high','highest')),
-    author INT,
-    FOREIGN KEY (author) REFERENCES user(id) ON DELETE SET NULL,
+    author_id INT,
+    FOREIGN KEY (author_id) REFERENCES user(id) ON DELETE SET NULL,
     service_request INT REFERENCES service_request(id)
 );
 
@@ -41,22 +41,22 @@ CREATE TABLE service_request (
     created_timestamp TIMESTAMP DEFAULT current_timestamp,
     days_remaining INT DEFAULT 0,
     price INT DEFAULT 0,
-    priority VARCHAR(7) CHECK( PRIORITY IN ('lowest','low','regular','high','highest')),
+    priority VARCHAR(7) CHECK( priority IN ('lowest','low','regular','high','highest')),
     state VARCHAR(10) CHECK( state IN ('open','inProgress','done')),
-    technician INT,
-    FOREIGN KEY (technician) REFERENCES user(id) ON DELETE SET NULL,
-    author INT,
-    FOREIGN KEY (author) REFERENCES user(id) ON DELETE SET NULL
+    technician_id INT,
+    CONSTRAINT fk_technician FOREIGN KEY (technician_id) REFERENCES user(id) ON DELETE SET NULL,
+    author_id INT,
+    CONSTRAINT fk_author FOREIGN KEY (author_id) REFERENCES user(id) ON DELETE SET NULL
 );
 
 CREATE TABLE ticket_comments (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     text VARCHAR(255),
     created_timestamp TIMESTAMP DEFAULT current_timestamp,
-    ticket INT,
-    FOREIGN KEY (ticket) REFERENCES ticket(id) ON DELETE CASCADE,
-    author INT,
-    FOREIGN KEY (author) REFERENCES user(id) ON DELETE SET NULL
+    ticket_id INT,
+    FOREIGN KEY (ticket_id) REFERENCES ticket(id) ON DELETE CASCADE,
+    author_id INT,
+    FOREIGN KEY (author_id) REFERENCES user(id) ON DELETE SET NULL
 );
 
 CREATE TABLE service_request_comments (
@@ -65,10 +65,10 @@ CREATE TABLE service_request_comments (
     created_timestamp TIMESTAMP DEFAULT current_timestamp,
     ticket_id INT,
     FOREIGN KEY (ticket_id) REFERENCES  ticket (id) ON DELETE SET NULL,
-    author INT,
-    FOREIGN KEY (author) REFERENCES user(id) ON DELETE SET NULL,
-    request INT,
-    FOREIGN KEY (request) REFERENCES service_request(id) ON DELETE CASCADE
+    author_id INT,
+    FOREIGN KEY (author_id) REFERENCES user(id) ON DELETE SET NULL,
+    request_id INT,
+    FOREIGN KEY (request_id) REFERENCES service_request(id) ON DELETE CASCADE
 );
 
 CREATE TABLE images (
@@ -89,7 +89,7 @@ CREATE TRIGGER service_request_technician
      SELECT c.role
          INTO role
          FROM user c
-         WHERE c.id = new.technician;
+         WHERE c.id = new.technician_id;
      IF role != 'technician' THEN
          SIGNAL SQLSTATE '45000' SET message_text = 'Assigned user is not a technician.';
      END IF;
@@ -106,7 +106,7 @@ CREATE TRIGGER service_request_author
      SELECT c.role
          INTO role
          FROM user c
-         WHERE c.id = new.author;
+         WHERE c.id = new.author_id;
      IF role != 'officer' THEN
          SIGNAL SQLSTATE '45000' SET message_text = 'Only officers can create service requests.';
      END IF;
@@ -123,9 +123,9 @@ VALUES ('Don Leopold', 'Juan Nemcek', 'technician');
 INSERT INTO login_info(email, password)
 VALUES ('don.juan@gmail.com', 'terribleBurger86');
 
-INSERT INTO ticket (title, description, state, author)
+INSERT INTO ticket (title, description, state, author_id)
 VALUES ('Faulty street lamp', 'The street lamp on the corner of Sample Street and Made-up Ave. blinks rapidly for about 10 seconds every 5 or so minutes.',
         'open', (SELECT id FROM user WHERE surname = 'Novak'));
-INSERT INTO ticket (title, description, state, author)
+INSERT INTO ticket (title, description, state, author_id)
 VALUES ('Leaking hydrant', 'The hydrant on the corner of Sample Street and Made-up Ave. is leaking water slowly.',
         'open', (SELECT id FROM user WHERE surname = 'Juan Nemcek'));
