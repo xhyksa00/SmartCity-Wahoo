@@ -14,11 +14,11 @@ CREATE TABLE user (
 );
 
 CREATE TABLE login_info(
+    email VARCHAR(50) PRIMARY KEY NOT NULL,
     userId INT,
     FOREIGN KEY (userId)
         REFERENCES user(id)
         ON DELETE CASCADE,
-    email VARCHAR(50) NOT NULL,
     password VARCHAR(100) NOT NULL
 );
 
@@ -115,13 +115,13 @@ CREATE TRIGGER service_request_author
 -- INSERT SAMPLE DATA
 INSERT INTO user (name, surname, role)
 VALUES ('Jan', 'Novak', 'citizen');
-INSERT INTO login_info(email, password)
-VALUES ('jan.novak@gmail.com', 'tmpPwd');
+INSERT INTO login_info (email, userId, password)
+VALUES ('jan.novak@gmail.com', 1, '$2b$12$DNLUpKOzdfSWxx232ng3eee70n47lAZHvMGrq1Bwry2ZO/PPlekNS');
 
 INSERT INTO user (name, surname, role)
 VALUES ('Don Leopold', 'Juan Nemcek', 'technician');
-INSERT INTO login_info(email, password)
-VALUES ('don.juan@gmail.com', 'terribleBurger86');
+INSERT INTO login_info (email, userId, password)
+VALUES ('don.juan@gmail.com', 2, '$2b$12$obxW/cGVbfI2WLP1rKJAVOhLHU3QkuxC58kJ5ZvwCd0pDJ8ROrbqS');
 
 
 INSERT INTO ticket (title, description, state, authorId)
@@ -130,8 +130,3 @@ VALUES ('Faulty street lamp', 'The street lamp on the corner of Sample Street an
 INSERT INTO ticket (title, description, state, authorId)
 VALUES ('Leaking hydrant', 'The hydrant on the corner of Sample Street and Made-up Ave. is leaking water slowly.',
         'open', (SELECT id FROM user WHERE surname = 'Juan Nemcek'));
-
-INSERT INTO login_info (userId, email, password)
-VALUES (1, 'jan.novak@gmail.com', '$2b$12$DNLUpKOzdfSWxx232ng3eee70n47lAZHvMGrq1Bwry2ZO/PPlekNS');
-INSERT INTO login_info (userId, email, password)
-VALUES (2, 'don.juan@gmail.com', '$2b$12$obxW/cGVbfI2WLP1rKJAVOhLHU3QkuxC58kJ5ZvwCd0pDJ8ROrbqS');
