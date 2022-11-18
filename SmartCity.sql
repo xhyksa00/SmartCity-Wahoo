@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS login_info;
 DROP TABLE IF EXISTS images;
-DROP TABLE IF EXISTS service_request;
 DROP TABLE IF EXISTS service_request_comments;
-DROP TABLE IF EXISTS ticket;
 DROP TABLE IF EXISTS ticket_comments;
+DROP TABLE IF EXISTS service_request;
+DROP TABLE IF EXISTS ticket;
+DROP TABLE IF EXISTS user;
 
 CREATE TABLE user (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -14,12 +14,12 @@ CREATE TABLE user (
 );
 
 CREATE TABLE login_info(
-    user_id INT PRIMARY KEY
-        AUTO_INCREMENT
+    user_id INT,
+    FOREIGN KEY (user_id)
         REFERENCES user(id)
         ON DELETE CASCADE,
     email VARCHAR(50) NOT NULL,
-    password VARCHAR(50) NOT NULL
+    password VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE ticket (
@@ -30,7 +30,8 @@ CREATE TABLE ticket (
         state IN ('open','waiting','inProgress','cls-denied','cls-fixed','cls-duplicate')),
     created_timestamp TIMESTAMP DEFAULT current_timestamp,
     priority  VARCHAR(7) CHECK( priority IN ('lowest','low','regular','high','highest')),
-    author INT REFERENCES user(id) ON DELETE SET NULL,
+    author INT,
+    FOREIGN KEY (author) REFERENCES user(id) ON DELETE SET NULL,
     service_request INT REFERENCES service_request(id)
 );
 
@@ -42,30 +43,38 @@ CREATE TABLE service_request (
     price INT DEFAULT 0,
     priority VARCHAR(7) CHECK( PRIORITY IN ('lowest','low','regular','high','highest')),
     state VARCHAR(10) CHECK( state IN ('open','inProgress','done')),
-    technician INT REFERENCES user (id) ON DELETE SET NULL,
-    author INT REFERENCES user (id) ON DELETE SET NULL
+    technician INT,
+    FOREIGN KEY (technician) REFERENCES user(id) ON DELETE SET NULL,
+    author INT,
+    FOREIGN KEY (author) REFERENCES user(id) ON DELETE SET NULL
 );
 
 CREATE TABLE ticket_comments (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     text VARCHAR(255),
     created_timestamp TIMESTAMP DEFAULT current_timestamp,
-    ticket INT REFERENCES ticket(id) ON DELETE CASCADE,
-    author INT REFERENCES user(id) ON DELETE SET NULL
+    ticket INT,
+    FOREIGN KEY (ticket) REFERENCES ticket(id) ON DELETE CASCADE,
+    author INT,
+    FOREIGN KEY (author) REFERENCES user(id) ON DELETE SET NULL
 );
 
 CREATE TABLE service_request_comments (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     text VARCHAR(255),
     created_timestamp TIMESTAMP DEFAULT current_timestamp,
-    ticket_id INT REFERENCES  ticket (id) ON DELETE SET NULL,
-    author INT REFERENCES user(id) ON DELETE SET NULL,
-    request INT REFERENCES service_request(id) ON DELETE CASCADE
+    ticket_id INT,
+    FOREIGN KEY (ticket_id) REFERENCES  ticket (id) ON DELETE SET NULL,
+    author INT,
+    FOREIGN KEY (author) REFERENCES user(id) ON DELETE SET NULL,
+    request INT,
+    FOREIGN KEY (request) REFERENCES service_request(id) ON DELETE CASCADE
 );
 
 CREATE TABLE images (
     name VARCHAR(50) PRIMARY KEY,
-    ticket_id INT REFERENCES ticket (id) ON DELETE CASCADE
+    ticket_id INT,
+    FOREIGN KEY (ticket_id) REFERENCES ticket (id) ON DELETE CASCADE
 );
 
 -- triggers
@@ -113,3 +122,10 @@ INSERT INTO user (name, surname, role)
 VALUES ('Don Leopold', 'Juan Nemcek', 'technician');
 INSERT INTO login_info(email, password)
 VALUES ('don.juan@gmail.com', 'terribleBurger86');
+
+INSERT INTO ticket (title, description, state, author)
+VALUES ('Faulty street lamp', 'The street lamp on the corner of Sample Street and Made-up Ave. blinks rapidly for about 10 seconds every 5 or so minutes.',
+        'open', (SELECT id FROM user WHERE surname = 'Novak'));
+INSERT INTO ticket (title, description, state, author)
+VALUES ('Leaking hydrant', 'The hydrant on the corner of Sample Street and Made-up Ave. is leaking water slowly.',
+        'open', (SELECT id FROM user WHERE surname = 'Juan Nemcek'));
