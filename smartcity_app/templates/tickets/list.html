@@ -1,8 +1,34 @@
-{% extends "base.html" %}
+{% extends "navbar_base.html" %}
 {% block content %}
 
-{% for ticket in tickets %}
-    {{ticket.name}},{{ticket.surname}},{{ticket.role}}<br>
-{% endfor %}
+<style>
+.table-row{
+    cursor:pointer;
+}
+</style>
+
+<table class="table rounded table-hover table-striped">
+    <thead class="text-center">
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Created</th>
+            <th scope="col">Priority</th>
+            <th scope="col">Service Request</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody class="bg-body">
+        {% for ticket in tickets %}
+        <tr class="table-row" onclick="window.location='{{ticket.id}}'">
+            <td>{{ticket.title}}</td>
+            <td>{{ticket.created_timestamp}}</td>
+            <td class="text-center">{{ticket.priority}}</td>
+            <td class="text-center">{{ticket.service_request}}</td>
+            <td class="text-center">{{ticket.state}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 
 {% endblock content %}
