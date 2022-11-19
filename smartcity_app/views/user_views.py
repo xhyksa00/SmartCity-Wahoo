@@ -42,17 +42,41 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-            name = form.cleaned_data['first_name']
-            surname = form.cleaned_data['surname']
-            pwd = form.cleaned_data['password']
-            pwd_confirm = form.cleaned_data['confirm_password']
+
+
             context = { 
-            'form' : form,
+                'form' : form,
             }
-            if( pwd == pwd_confirm):
+
+            pwd = form.cleaned_data['password']
+            if( pwd == form.cleaned_data['confirm_password']):
+
+                loginData = LoginInfo.objects.filter(email = email).values()
+                kek = loginData.first()
+                if(loginData):
+                    messages.error(request, 'Email already taken, id = %i .' % kek)
+                    return render('/user/register.html', context)
+
+                user = User(
+                    name = form.cleaned_data['first_name'],
+                    surname = form.cleaned_data['surname'],
+                    role = 'citizen'
+                )
+                user.save()
+
+                loginInfo = LoginInfo(
+                    email = form.cleaned_data['email'],
+                    password = hashpw(form.cleaned_data['password'].encode('utf8'), gensalt()),
+                    userid = user
+                )
+
+                loginInfo.save()
+
+
                 messages.success(request, 'Account successfully created.')
                 return HttpResponseRedirect('/user/login')
             else:
+                
                 messages.error(request, 'Passwords do not match.')
                 return render(request, 'user/register.html', context)
     else:
