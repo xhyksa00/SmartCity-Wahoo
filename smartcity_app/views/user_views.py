@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect,HttpResponseBadRequest
 from ..forms.user_forms import LoginForm, RegisterForm
 from bcrypt import hashpw,gensalt,checkpw
-from ..models import LoginInfo
+from ..models import LoginInfo, User
 from django.contrib import messages
 
 
@@ -12,18 +12,21 @@ def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
+            context = {
+                'form' : form
+            }
             email = form.cleaned_data['email']
             pwd = form.cleaned_data['password']
 
-            loginData = LoginInfo.objects.filter(email = email)
-            
-            if ( loginData and checkpw(pwd.encode('utf8'), loginData.password.encode('utf8')) ):
-                request.session['userId'] = loginData.user
-                return HttpResponseRedirect('/hello/')
+            # loginData = LoginInfo.objects.filter(email = email).select_related('userid').values()
+            loginData = LoginInfo.objects.filter(email = email).values()
+
+            if ( loginData and checkpw(pwd.encode('utf8'), loginData.first()['password'].encode('utf8')) ):
+                # request.session['userRole'] = loginData.first()['userid']
+
+                messages.success(request, 'Login succesfull.')
+                return render(request, 'user/login.html',context)
             else:
-                context = {
-                    'form' : form
-                }
                 messages.error(request,'Credentials do not match any account.')
                 return render(request, 'user/login.html',context)
         else:
@@ -58,8 +61,6 @@ def register(request):
         'form' : RegisterForm()}
         return render(request, 'user/register.html', context=context)
 
-def registerConfirmation(request):
-    return render(request,'user/registerConfiramtion.html')
 
 def sayHello(request):
     if 'userId' in request.session:
