@@ -62,13 +62,21 @@
 
                                 <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
                                         <li class="nav-item">
-                                                <a class="nav-link" href="#">New ticket</a>
+                                                <a class="nav-link" href="/user/{{idCurrent}}"><strong>{{nameCurrent}} {{surnameCurrent}}</strong></a>
                                         </li>
                                         <li class="nav-item">
-                                                <a class="nav-link" href="/user/{{idCurrent}}">{{nameCurrent}} {{surnameCurrent}}</a>
+                                                <a class="nav-link" href="#">
+                                                        <button class="btn btn-outline-success">
+                                                                New ticket
+                                                        </button>
+                                                </a>
                                         </li>
                                         <li class="nav-item">
-                                                <a class="nav-link" href="/user/logout">Logout</a>
+                                                <a class="nav-link" href="/user/logout">
+                                                        <button class="btn btn-outline-danger">
+                                                                Log out
+                                                        </button>
+                                                </a>
                                         </li>
                                 </ul>
 

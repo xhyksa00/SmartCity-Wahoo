@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect,HttpResponseBadRequest
-from ..forms.user_forms import LoginForm, RegisterForm, OfficerRoleForm
+from ..forms.user_forms import LoginForm, RegisterForm, OfficerRoleForm, EditAccountForm
 from bcrypt import hashpw,gensalt,checkpw
 from ..models import LoginInfo, User
 from django.contrib import messages
@@ -23,14 +23,15 @@ def login(request):
         
 
             if ( loginData and checkpw(pwd.encode('utf8'), loginData.first().password.encode('utf8')) ):
-                request.session['userId'] = loginData.first().userid_id
+                id = loginData.first().userid_id
+                request.session['userId'] = id
                 request.session['userRole'] = loginData.first().userid.role
                 request.session['userName'] = loginData.first().userid.name
                 request.session['userSurname'] = loginData.first().userid.surname
 
                 messages.success(request, 'Login succesfull.')
                 # return render(request, 'user/login.html',context)
-                return HttpResponseRedirect('/user/2')
+                return HttpResponseRedirect(f'/user/{id}/')
             else:
                 messages.error(request,'Credentials do not match any account.')
                 return render(request, 'user/login.html',context)
@@ -78,7 +79,7 @@ def register(request):
 
 
                 messages.success(request, 'Account successfully created.')
-                return HttpResponseRedirect('/user/login')
+                return HttpResponseRedirect('/user/login/')
             else:
                 
                 messages.error(request, 'Passwords do not match.')
@@ -99,11 +100,11 @@ def viewUser(request, id):
             changedUser = User.objects.filter(id = id).all().first()
             changedUser.role = form.cleaned_data['role']
             changedUser.save()
-            return HttpResponseRedirect(f'/user/{id}')
+            return HttpResponseRedirect(f'/user/{id}/')
 
     if currentUserData == {}:
-        messages.warning(request, "You need to log in for visiting this page.")
-        return HttpResponseRedirect('/user/login')
+        messages.warning(request, "You need to log in to visit this page.")
+        return HttpResponseRedirect('/user/login/')
 
     requestedUserData = User.objects.filter(id = id).values().first()
     if not requestedUserData:
@@ -119,7 +120,7 @@ def viewUser(request, id):
     if(currentUserData['roleCurrent'] == 'officer'):
         form = OfficerRoleForm()
         form.fields['role'].initial = requestedUserData['role']
-        context['form'] = form
+        context['form'] = form 
 
     return render(request, 'user/viewUser.html', context)
 
@@ -128,3 +129,32 @@ def viewUser(request, id):
 def logout(request):
     request.session.flush()
     return HttpResponseRedirect('/user/login/')
+
+def editProfile(request, id):
+    currentUserData = getCurrentUserDict(request)
+    if currentUserData == {}:
+        messages.warning(request, "You need to log in to visit this page.")
+        return HttpResponseRedirect('/user/login/')
+    
+    if currentUserData['idCurrent'] != id:
+        messages.error(request, 'You do not have permission to visit this page.')
+        return HttpResponseRedirect('/user/login/')
+
+    if request.method == "POST":
+        a = User.objects.filter(id = id).all().first()
+        form = EditAccountForm(request.POST,instance=a)
+        form.save()
+        request.session['userName'] = form.cleaned_data['name']
+        request.session['userSurname'] = form.cleaned_data['surname']
+        messages.success(request,'Account changed.')
+        return HttpResponseRedirect(f'/user/{id}/')
+
+    else:
+        a = User.objects.filter(id = id).all().first()
+        form = EditAccountForm(instance=a)
+        context = currentUserData
+        context['form'] = form
+        return render(request,'user/editAccount.html',context)
+
+
+
