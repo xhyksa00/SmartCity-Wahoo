@@ -58,9 +58,8 @@ def register(request):
             if( pwd == form.cleaned_data['confirm_password']):
 
                 loginData = LoginInfo.objects.filter(email = email).values()
-                kek = loginData.first()
                 if(loginData):
-                    messages.error(request, 'Email already taken, id = %s .' % kek['userid_id'])
+                    messages.error(request, 'Email already taken, id = %s .' % loginData.first()['userid_id'])
                     return render(request, '/user/register.html', context)
 
                 user = User(
