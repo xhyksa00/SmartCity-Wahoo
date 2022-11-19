@@ -28,6 +28,7 @@ class LoginInfo(models.Model):
 
 
 class ServiceRequest(models.Model):
+    id = models.AutoField(primary_key=True)
     description = models.CharField(max_length=255)
     created_timestamp = models.DateTimeField(blank=True, null=True)
     days_remaining = models.IntegerField(blank=True, null=True)
@@ -43,6 +44,7 @@ class ServiceRequest(models.Model):
 
 
 class ServiceRequestComments(models.Model):
+    id = models.AutoField(primary_key=True)
     text = models.CharField(max_length=255, blank=True, null=True)
     created_timestamp = models.DateTimeField(blank=True, null=True)
     ticketid = models.ForeignKey('Ticket', models.DO_NOTHING, db_column='ticketId', blank=True, null=True)  # Field name made lowercase.
@@ -55,6 +57,7 @@ class ServiceRequestComments(models.Model):
 
 
 class Ticket(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=50)
     description = models.CharField(max_length=255)
     state = models.CharField(max_length=13, blank=True, null=True)
@@ -69,6 +72,7 @@ class Ticket(models.Model):
 
 
 class TicketComments(models.Model):
+    id = models.AutoField(primary_key=True)
     text = models.CharField(max_length=255, blank=True, null=True)
     created_timestamp = models.DateTimeField(blank=True, null=True)
     ticketid = models.ForeignKey(Ticket, models.DO_NOTHING, db_column='ticketId', blank=True, null=True)  # Field name made lowercase.
@@ -80,6 +84,7 @@ class TicketComments(models.Model):
 
 
 class User(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
     surname = models.CharField(max_length=20)
     role = models.CharField(max_length=10, blank=True, null=True)
