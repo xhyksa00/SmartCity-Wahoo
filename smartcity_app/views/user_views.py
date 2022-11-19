@@ -31,7 +31,7 @@ def login(request):
 
                 messages.success(request, 'Login succesfull.')
                 # return render(request, 'user/login.html',context)
-                return HttpResponseRedirect('/user/1')
+                return HttpResponseRedirect('/user/2')
             else:
                 messages.error(request,'Credentials do not match any account.')
                 return render(request, 'user/login.html',context)
@@ -72,7 +72,7 @@ def register(request):
 
                 loginInfo = LoginInfo(
                     email = form.cleaned_data['email'],
-                    password = hashpw(form.cleaned_data['password'].encode('utf8'), gensalt()),
+                    password = hashpw(form.cleaned_data['password'].encode('utf8'), gensalt()).decode('utf8'),
                     userid = user
                 )
 
@@ -111,3 +111,7 @@ def viewUser(request, id):
         context['owner']  = True
 
     return render(request, 'user/viewUser.html', context)
+
+def logout(request):
+    request.session.flush()
+    return HttpResponseRedirect('/user/login/')
