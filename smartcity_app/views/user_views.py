@@ -22,16 +22,15 @@ def login(request):
                 return HttpResponseRedirect('/hello/')
             else:
                 context = {
-                    'form' : form,
-                    'login_fail': True
+                    'form' : form
                 }
-                return render(request, 'user/login.html')
+                messages.error(request,'Credentials do not match any account.')
+                return render(request, 'user/login.html',context)
         else:
             return HttpResponseBadRequest()
     else:
         context = {
-            'form' : LoginForm(),
-            'login_fail': False
+            'form' : LoginForm()
         }
         return render(request, 'user/login.html', context=context)
 
@@ -44,17 +43,14 @@ def register(request):
             surname = form.cleaned_data['surname']
             pwd = form.cleaned_data['password']
             pwd_confirm = form.cleaned_data['confirm_password']
-            context = { 'email' : email,
+            context = { 
             'form' : form,
-            'pwdFail' : False,
-            'emailTaken' : False
             }
             if( pwd == pwd_confirm):
-                messages.info(request, "LOL")
-                #messages.add_message(request, messages.INFO, 'Hello world.')
-                return HttpResponseRedirect('/user/registerConfiramtion')
+                messages.success(request, 'Account successfully created.')
+                return HttpResponseRedirect('/user/login')
             else:
-                context['pwdFail']  = True
+                messages.error(request, 'Passwords do not match.')
                 return render(request, 'user/register.html', context)
     else:
         context = {'pwdFail' : False,
