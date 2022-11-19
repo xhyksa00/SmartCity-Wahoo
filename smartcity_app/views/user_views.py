@@ -30,8 +30,7 @@ def login(request):
                 request.session['userSurname'] = loginData.first().userid.surname
 
                 messages.success(request, 'Login succesfull.')
-                # return render(request, 'user/login.html',context)
-                return HttpResponseRedirect(f'/user/{id}/')
+                return HttpResponseRedirect(f'/user/{id}/') #TODO: goto tickets view
             else:
                 messages.error(request,'Credentials do not match any account.')
                 return render(request, 'user/login.html',context)
@@ -103,7 +102,7 @@ def viewUser(request, id):
             return HttpResponseRedirect(f'/user/{id}/')
 
     if currentUserData == {}:
-        messages.warning(request, "You need to log in to visit this page.")
+        messages.error(request, "You need to log in to visit this page.")
         return HttpResponseRedirect('/user/login/')
 
     requestedUserData = User.objects.filter(id = id).values().first()
@@ -138,7 +137,7 @@ def editProfile(request, id):
     
     if currentUserData['idCurrent'] != id:
         messages.error(request, 'You do not have permission to visit this page.')
-        return HttpResponseRedirect('/user/login/')
+        return HttpResponseRedirect('/user/login/') #TODO: goto tickets view
 
     if request.method == "POST":
         a = User.objects.filter(id = id).all().first()
@@ -157,4 +156,19 @@ def editProfile(request, id):
         return render(request,'user/editAccount.html',context)
 
 
+
+def deleteAccount(request, id):
+    currentUserData = getCurrentUserDict(request)
+
+    if currentUserData['idCurrent'] == id :
+        User.objects.filter(id = id).delete()
+        messages.warning(request, "Account deleted")
+        return HttpResponseRedirect('/user/login/')
+    elif currentUserData['roleCurrent'] == 'admin':
+        User.objects.filter(id = id).delete()
+        messages.warning(request, "Account successfully deleted.")
+        return HttpResponseRedirect('/user/1/') #TODO: go to root
+    else:
+        messages.error(request,"You do not have privileges for this action.")
+        return HttpResponseRedirect('/user/1/') #TODO: go to root
 
