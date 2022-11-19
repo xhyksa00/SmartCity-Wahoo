@@ -6,14 +6,24 @@
         <h1>Information about user</h1>
         <div class="top-50 start-50">
             Name : <strong>{{ name }}</strong> <br>
+            {% if role != "officer" %}
             Surname: <strong>{{ surname }}</strong> <br>
+            {% else %}
+            Surname: 
+            <form action="." method="POST">
+                <select name="myselect" id="myselect" onchange="this.form.submit()">
+                    <option value="1">Citize</option>
+                    <option value="2">Technician</option>
+                </select>
+            </form>
+            {% endif %}
             Role: <strong>{{ role }}</strong> <br>
         </div>
 
         {% if owner %}
             <div class="mt-3">
-                <button type="button" class="btn btn-primary me-2">Edit profile</button>
-                <button type="button" class="btn btn-danger">Delete profile</button>
+                <a href="#"><button type="button" class="btn btn-primary me-2">Edit profile</button></a>
+                <a href="#"><button type="button" class="btn btn-danger">Delete profile</button></a>
             </div>
         {% endif %}
 
