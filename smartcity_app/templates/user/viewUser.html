@@ -6,18 +6,16 @@
         <h1>Information about user</h1>
         <div class="top-50 start-50">
             Name : <strong>{{ name }}</strong> <br>
-            {% if role != "officer" %}
             Surname: <strong>{{ surname }}</strong> <br>
+            {% if roleCurrent == "officer"  and role != "officer" %}
+                <form action="." method="POST">
+                    {% csrf_token %}
+                    {{form}}
+                </form>
             {% else %}
-            Surname: 
-            <form action="." method="POST">
-                <select name="myselect" id="myselect" onchange="this.form.submit()">
-                    <option value="1">Citize</option>
-                    <option value="2">Technician</option>
-                </select>
-            </form>
+                Role:
+                 <strong>{{ role }}</strong> <br>
             {% endif %}
-            Role: <strong>{{ role }}</strong> <br>
         </div>
 
         {% if owner %}

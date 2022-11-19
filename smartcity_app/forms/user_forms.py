@@ -28,3 +28,16 @@ class RegisterForm(forms.Form):
         for fieldName in self.Meta.fields:
             self.fields[fieldName].widget.attrs['class'] = 'form-control'
 
+class OfficerRoleForm(forms.Form):
+    class Meta:
+        fields = ['role']
+        choices = [('citizen','Citizen'),('technician', 'Technician')]
+
+    role = forms.ChoiceField(choices=Meta.choices)
+
+    def __init__(self, *args, **kwargs):
+        super(OfficerRoleForm, self).__init__(*args, **kwargs)
+        for fieldName in self.Meta.fields:
+            self.fields[fieldName].widget.attrs['onchange'] =  'this.form.submit()'
+        
+

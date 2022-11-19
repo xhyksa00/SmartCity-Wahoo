@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect,HttpResponseBadRequest
-from ..forms.user_forms import LoginForm, RegisterForm
+from ..forms.user_forms import LoginForm, RegisterForm, OfficerRoleForm
 from bcrypt import hashpw,gensalt,checkpw
 from ..models import LoginInfo, User
 from django.contrib import messages
@@ -14,8 +14,7 @@ def login(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             context = {
-                'form' : form,
-                
+                'form' : form,                
             }
             email = form.cleaned_data['email']
             pwd = form.cleaned_data['password']
@@ -94,22 +93,37 @@ def register(request):
 def viewUser(request, id):
     currentUserData = getCurrentUserDict(request)
 
+    if request.method == "POST":
+        form = OfficerRoleForm(request.POST)
+        if form.is_valid():
+            changedUser = User.objects.filter(id = id).all().first()
+            changedUser.role = form.cleaned_data['role']
+            changedUser.save()
+            return HttpResponseRedirect(f'/user/{id}')
 
     if currentUserData == {}:
         messages.warning(request, "You need to log in for visiting this page.")
         return HttpResponseRedirect('/user/login')
 
     requestedUserData = User.objects.filter(id = id).values().first()
-    # loginData = LoginInfo.objects.filter(email = email).select_related('userid').all()
     if not requestedUserData:
         return HttpResponseBadRequest("User with selected id does not exist")
 
     context = {**currentUserData, **requestedUserData}
 
+
+
     if(id == currentUserData['idCurrent']):
         context['owner']  = True
 
+    if(currentUserData['roleCurrent'] == 'officer'):
+        form = OfficerRoleForm()
+        form.fields['role'].initial = requestedUserData['role']
+        context['form'] = form
+
     return render(request, 'user/viewUser.html', context)
+
+
 
 def logout(request):
     request.session.flush()
