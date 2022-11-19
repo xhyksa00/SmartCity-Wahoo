@@ -157,7 +157,7 @@ def editProfile(request, id):
 
 
 
-def deleteAccount(request, id):
+def deleteAccount(request, id): #TODO: confirmation?
     currentUserData = getCurrentUserDict(request)
 
     if currentUserData['idCurrent'] == id :
