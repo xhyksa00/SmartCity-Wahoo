@@ -2,22 +2,18 @@
 {% block content %}
 
 
-<div class="position-absolute top-50 start-50 translate-middle rounded color-block bg-info bg-gradient" >
+<div class="position-absolute top-50 start-50 translate-middle rounded color-block bg-info bg-gradient">
     <div class="m-4">
-
-
         <form action="." method="POST">
             {% csrf_token %}
             {{form}}
-        <div class="pe-2 col text-center">
-            <button type="submit" class="btn btn-primary end-50 mt-2">Submit</button>
-        </div>
-    </form>
-    
+            <div class="pe-2 col text-center">
+                <button type="submit" class="btn btn-primary end-50 mt-2">Submit</button>
+            </div>
+        </form>
         
-
-    <div class= "col text-center" >
-        <a href="/user/register">
+        <div class="col text-center">
+            <a href="/user/register">
                 Don't have an account? <br> Register.
             </a>
         </div>
@@ -27,5 +23,3 @@
 
 
 {% endblock content %}
-
-
