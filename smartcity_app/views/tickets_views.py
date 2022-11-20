@@ -3,12 +3,33 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from ..models import Ticket, User
 from .helpers import getCurrentUserDict
 from django.contrib import messages
-# from ..forms import ticket_forms
+from ..forms.ticket_forms import CreateTicketForm
 
 def list_tickets(request: HttpRequest) -> HttpResponse:
     tickets = Ticket.objects.all()
-    return render(request, 'tickets/list.html', {'tickets': tickets})
+    currentUserData = getCurrentUserDict(request)
+    context = {
+        'tickets': tickets,
+        'currentUserData': currentUserData,
+    }
+
+    return render(request, 'tickets/list.html', context)
 
 def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
     ticket = Ticket.objects.filter(id=id).values().first()
-    return render(request, 'tickets/details.html', ticket)
+    details = Ticket.objects.filter(id=id).select_related('authorid').all().first()
+    currentUserData = getCurrentUserDict(request)
+    context = {
+        'ticket': details,
+        'currentUserData': currentUserData,
+    }
+
+    return render(request, 'tickets/details.html', context)
+
+def create_ticket(request: HttpRequest) -> HttpResponse:
+    context = {}
+
+
+
+    return render(request, 'tickets/create.html', context)
+
