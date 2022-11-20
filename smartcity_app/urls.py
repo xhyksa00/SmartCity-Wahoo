@@ -16,7 +16,7 @@ userUrls = [
 ticketsUrls = [
     path('tickets/list', tickets_views.list_tickets, name='list-tickets'),
     path('tickets/<int:id>', tickets_views.show_ticket, name='ticket-details'),
-    path('tickets/create', tickets_views.create_ticket, name='create-ticket'),
+    #path('tickets/create', tickets_views.create_ticket, name='create-ticket'),
 ]
 
 testUrls = [
