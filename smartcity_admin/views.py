@@ -23,14 +23,12 @@ def login(request):
             pwd = '$2b$12$Lwi2R63PSbJl3W1a.GZewOeprcNmF3ceRRO1WwWx5jm4ai30Qjtf2'
 
             if (checkpw(pwdInput.encode('utf8'), pwd.encode('utf8'))):
-                request.session['adminName'] = username
                 # todo: redirect to somewhere meaningful
                 return HttpResponse("HI")
             else:
                 messages.error(request, "Incorrect credentials.")
                 context = {
                     'form': form,
-                    'userName': '',
                     'isLoggedIn': False,
                 }
                 return render(request, 'login.html', context)
@@ -42,3 +40,13 @@ def login(request):
             'isLoggedIn': False,
         }
         return render(request, 'login.html', context)
+
+def logout(request):
+    request.session.flush()
+    messages.warning(request,'Logged out.')
+    return HttpResponseRedirect('/admin/login/')
+
+def changePassword(request):
+    if not isLoggedIn(request):
+        messages.error(request, 'You need to login first.')
+        return HttpResponseRedirect('/admin/login/')
