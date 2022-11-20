@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect,HttpResponseBadRequest
-from ..forms.user_forms import LoginForm, RegisterForm, OfficerRoleForm, EditAccountForm
+from ..forms.user_forms import LoginForm, RegisterForm, OfficerRoleForm, EditAccountForm, ChangePasswordForm
 from bcrypt import hashpw,gensalt,checkpw
 from ..models import LoginInfo, User
 from django.contrib import messages
@@ -153,7 +153,7 @@ def editProfile(request, id):
         form = EditAccountForm(instance=a)
         context = currentUserData
         context['form'] = form
-        return render(request,'user/editAccount.html',context)
+        return render(request,'user/simpleForm.html',context)
 
 
 
@@ -171,4 +171,47 @@ def deleteAccount(request, id): #TODO: confirmation?
     else:
         messages.error(request,"You do not have privileges for this action.")
         return HttpResponseRedirect('/user/1/') #TODO: go to root
+
+def changePassword(request, id):
+    currentUserData = getCurrentUserDict(request)
+    
+    if currentUserData == {} or currentUserData['idCurrent'] != id:
+        messages.error(request, 'You do not have permission to visit this page.')
+        return HttpResponseRedirect('/user/login/') #TODO: goto root
+
+    context = currentUserData
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST)
+
+        if form.is_valid():
+            oldPwdInput = form.cleaned_data['old_password']
+            newPwdInput = form.cleaned_data['password']
+            confirmPwdInput = form.cleaned_data['confirm_password']
+            context['form'] = form
+
+            if newPwdInput != confirmPwdInput:
+                messages.error(request, "Passwords do not match.")
+                return render(request, 'user/simpleForm.html', context)
+            
+            loginInfo = LoginInfo.objects.filter(userid_id = id).all().first()
+            if not checkpw(oldPwdInput.encode('utf8'), loginInfo.password.encode('utf8')):
+                messages.error(request, "Incorrect password.")
+                return render(request, 'user/simpleForm.html', context)
+
+            if oldPwdInput == newPwdInput:
+                messages.error(request, "New password cannot be same as old password.")
+                return render(request, 'user/simpleForm.html', context)
+
+            loginInfo.password = hashpw(newPwdInput.encode('utf8'),gensalt()).decode('utf8')
+            loginInfo.save()
+            messages.success(request,'Password changed.')
+            return HttpResponseRedirect(f'/user/{id}/')
+    
+    else:
+        context['form'] = ChangePasswordForm()
+        return render(request, 'user/simpleForm.html', context)
+
+
+
+
 

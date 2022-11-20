@@ -11,3 +11,4 @@ def getCurrentUserDict(request):
         'idCurrent' : request.session['userId']
     }
 
+

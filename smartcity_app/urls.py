@@ -9,7 +9,8 @@ userUrls = [
     path('user/<int:id>/', user_views.viewUser),
     path('user/logout/', user_views.logout),
     path('user/edit/<int:id>/', user_views.editProfile),
-    path('user/delete/<int:id>/', user_views.deleteAccount)
+    path('user/delete/<int:id>/', user_views.deleteAccount),
+    path('user/edit/password/<int:id>/', user_views.changePassword),
     ]
 
 ticketsUrls = [
