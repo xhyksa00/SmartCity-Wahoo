@@ -30,7 +30,7 @@ def login(request):
                 request.session['userSurname'] = loginData.first().userid.surname
 
                 messages.success(request, 'Login succesfull.')
-                return HttpResponseRedirect(f'/user/{id}/') #TODO: goto tickets view
+                return HttpResponseRedirect('/')
             else:
                 messages.error(request,'Credentials do not match any account.')
                 return render(request, 'user/login.html',context)
@@ -109,7 +109,6 @@ def viewUser(request, id):
     if not requestedUserData:
         return HttpResponseBadRequest("User with selected id does not exist")
 
-    # context = {**currentUserData, **requestedUserData}
     context = requestedUserData
     context['currentUserData'] = currentUserData
 
@@ -139,7 +138,7 @@ def editProfile(request, id):
     
     if currentUserData['id'] != id:
         messages.error(request, 'You do not have permission to visit this page.')
-        return HttpResponseRedirect('/user/login/') #TODO: goto tickets view
+        return HttpResponseRedirect('/')
 
     if request.method == "POST":
         a = User.objects.filter(id = id).all().first()
@@ -167,22 +166,23 @@ def deleteAccount(request, id): #TODO: confirmation?
 
     if currentUserData['id'] == id :
         User.objects.filter(id = id).delete()
+        request.session.flush()
         messages.warning(request, "Account deleted")
         return HttpResponseRedirect('/user/login/')
     elif currentUserData['role'] == 'admin':
         User.objects.filter(id = id).delete()
         messages.warning(request, "Account successfully deleted.")
-        return HttpResponseRedirect('/user/1/') #TODO: go to root
+        return HttpResponseRedirect('/')
     else:
         messages.error(request,"You do not have privileges for this action.")
-        return HttpResponseRedirect('/user/1/') #TODO: go to root
+        return HttpResponseRedirect('/')
 
 def changePassword(request, id):
     currentUserData = getCurrentUserDict(request)
     
     if currentUserData == {} or currentUserData['id'] != id:
         messages.error(request, 'You do not have permission to visit this page.')
-        return HttpResponseRedirect('/user/login/') #TODO: goto root
+        return HttpResponseRedirect('/')
 
     context = {
         'currentUserData': currentUserData,
