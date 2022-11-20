@@ -57,7 +57,7 @@
                 <li><a class="dropdown-item" href="#">Created by me</a></li>
               </ul>
             </li>
-            {% if roleCurrent in "technician,officer" %}
+            {% if currentUserData.role in "technician,officer" %}
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"
@@ -71,12 +71,12 @@
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="#">All</a></li>
                 <li><a class="dropdown-item" href="#">Assigned to me</a></li>
-                {% if roleCurrent == "officer" %}
+                {% if currentUserData.role == "officer" %}
                 <li><a class="dropdown-item" href="#">Created by me</a></li>
                 {% endif %}
               </ul>
             </li>
-            {% endif %} {% if roleCurrent == "officer" %}
+            {% endif %} {% if currentUserData.role == "officer" %}
             <li class="nav-item">
               <a class="nav-link" href="#">Users</a>
             </li>
@@ -85,8 +85,8 @@
 
           <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link" href="/user/{{idCurrent}}/">
-                {{nameCurrent}} {{surnameCurrent}}
+              <a class="nav-link" href="/user/{{currentUserData.id}}/">
+                {{currentUserData.name}} {{currentUserData.surname}}
               </a>
             </li>
             <li class="nav-item">

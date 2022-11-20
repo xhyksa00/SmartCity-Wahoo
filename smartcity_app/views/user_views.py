@@ -109,14 +109,16 @@ def viewUser(request, id):
     if not requestedUserData:
         return HttpResponseBadRequest("User with selected id does not exist")
 
-    context = {**currentUserData, **requestedUserData}
+    # context = {**currentUserData, **requestedUserData}
+    context = requestedUserData
+    context['currentUserData'] = currentUserData
 
 
 
-    if(id == currentUserData['idCurrent']):
+    if(id == currentUserData['id']):
         context['owner']  = True
 
-    if(currentUserData['roleCurrent'] == 'officer'):
+    if(currentUserData['role'] == 'officer'):
         form = OfficerRoleForm()
         form.fields['role'].initial = requestedUserData['role']
         context['form'] = form 
@@ -135,7 +137,7 @@ def editProfile(request, id):
         messages.warning(request, "You need to log in to visit this page.")
         return HttpResponseRedirect('/user/login/')
     
-    if currentUserData['idCurrent'] != id:
+    if currentUserData['id'] != id:
         messages.error(request, 'You do not have permission to visit this page.')
         return HttpResponseRedirect('/user/login/') #TODO: goto tickets view
 
@@ -151,8 +153,11 @@ def editProfile(request, id):
     else:
         a = User.objects.filter(id = id).all().first()
         form = EditAccountForm(instance=a)
-        context = currentUserData
-        context['form'] = form
+        context = {
+            'currentUserData': currentUserData,
+            'form': form
+        }
+
         return render(request,'user/simpleForm.html',context)
 
 
@@ -160,11 +165,11 @@ def editProfile(request, id):
 def deleteAccount(request, id): #TODO: confirmation?
     currentUserData = getCurrentUserDict(request)
 
-    if currentUserData['idCurrent'] == id :
+    if currentUserData['id'] == id :
         User.objects.filter(id = id).delete()
         messages.warning(request, "Account deleted")
         return HttpResponseRedirect('/user/login/')
-    elif currentUserData['roleCurrent'] == 'admin':
+    elif currentUserData['role'] == 'admin':
         User.objects.filter(id = id).delete()
         messages.warning(request, "Account successfully deleted.")
         return HttpResponseRedirect('/user/1/') #TODO: go to root
@@ -175,11 +180,13 @@ def deleteAccount(request, id): #TODO: confirmation?
 def changePassword(request, id):
     currentUserData = getCurrentUserDict(request)
     
-    if currentUserData == {} or currentUserData['idCurrent'] != id:
+    if currentUserData == {} or currentUserData['id'] != id:
         messages.error(request, 'You do not have permission to visit this page.')
         return HttpResponseRedirect('/user/login/') #TODO: goto root
 
-    context = currentUserData
+    context = {
+        'currentUserData': currentUserData,
+    }
     if request.method == 'POST':
         form = ChangePasswordForm(request.POST)
 
@@ -210,8 +217,3 @@ def changePassword(request, id):
     else:
         context['form'] = ChangePasswordForm()
         return render(request, 'user/simpleForm.html', context)
-
-
-
-
-

@@ -5,10 +5,10 @@ def getCurrentUserDict(request):
         return {}
     
     return {
-        'roleCurrent' : request.session['userRole'],
-        'nameCurrent' : request.session['userName'],
-        'surnameCurrent' : request.session['userSurname'],
-        'idCurrent' : request.session['userId']
+        'role' : request.session['userRole'],
+        'name' : request.session['userName'],
+        'surname' : request.session['userSurname'],
+        'id' : request.session['userId']
     }
 
 
