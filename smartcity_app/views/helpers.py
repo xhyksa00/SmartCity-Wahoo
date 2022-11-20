@@ -1,7 +1,7 @@
 
 def getCurrentUserDict(request):
-    if not 'userId' in request.session:
-        request.session.flush()
+
+    if not isUserLogged(request):
         return {}
     
     return {
@@ -10,5 +10,12 @@ def getCurrentUserDict(request):
         'surname' : request.session['userSurname'],
         'id' : request.session['userId']
     }
+
+def isUserLogged(request):
+    if not 'userRole' in request.session or not 'userName' in request.session or not 'userSurname' in request.session or not 'userId' in request.session:
+        request.session.flush()
+        return False
+
+    return True
 
 
