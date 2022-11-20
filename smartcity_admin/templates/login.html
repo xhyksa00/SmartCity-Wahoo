@@ -1,0 +1,15 @@
+{% extends "admin_base.html" %}
+{% block content %}
+
+<div style="width: 300px;">
+    <form action="." method="POST" >
+        {% csrf_token %}
+        {{form}}
+        <div class="pe-2 col text-center">
+            <button type="submit" class="btn btn-primary end-50 mt-2">Submit</button>
+        </div>
+    </form>
+
+</div>
+
+{% endblock content %}
