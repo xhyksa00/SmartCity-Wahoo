@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class PlaygroundConfig(AppConfig):
+class SmartcityAdminConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'playground'
+    name = 'smartcity_admin'

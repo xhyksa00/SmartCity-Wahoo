@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
-    'smartcity_app'
+    'smartcity_app',
+    'smartcity_admin'
 ]
 
 MIDDLEWARE = [
