@@ -12,16 +12,43 @@
 
 </head>
 
-<body style="background-color: #65e4f7;">
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert {{message.tags}} alert-dismissible fade show" role="alert"
-        style="position: fixed; bottom: 5px; left:2%; width: 96%;">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endfor %}
-    {% endif %}
+        <nav class="navbar navbar-expand-lg bg-light">
+                <div class="container-fluid">
+                        <a class="navbar-brand" href="#">Smart City</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarText">
+                                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                        <li class="nav-item dropdown">
+                                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        Tickets
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="#">All</a></li>
+                                                        <li><a class="dropdown-item" href="#">Created by me</a></li>
+                                                </ul>
+                                        </li>
+                                        {% if roleCurrent in "technician,officer" %}
+                                                <li class="nav-item dropdown">
+                                                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                Service requests
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                                <li><a class="dropdown-item" href="#">All</a></li>
+                                                                <li><a class="dropdown-item" href="#">Assigned to me</a></li>
+                                                                {% if roleCurrent == "officer" %}
+                                                                        <li><a class="dropdown-item" href="#">Created by me</a></li>
+                                                                {% endif %}
+                                                        </ul>
+                                                        
+                                                </li>
+                                        {% endif %}
+                                        {% if roleCurrent == "officer" %}
+                                                <li class="nav-item">
+                                                        <a class="nav-link" href="#">Users</a>
+                                                </li>
+                                        {% endif %}
 
     <nav class="navbar navbar-expand-lg bg-light">
         <div class="container-fluid">
@@ -56,13 +83,25 @@
                             {% endif %}
                         </ul>
 
-                    </li>
-                    {% endif %}
-                    {% if role == "officer" %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Users</a>
-                    </li>
-                    {% endif %}
+                                <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+                                        <li class="nav-item">
+                                                <a class="nav-link" href="/user/{{idCurrent}}"><strong>{{nameCurrent}} {{surnameCurrent}}</strong></a>
+                                        </li>
+                                        <li class="nav-item">
+                                                <a class="nav-link" href="#">
+                                                        <button class="btn btn-outline-success">
+                                                                New ticket
+                                                        </button>
+                                                </a>
+                                        </li>
+                                        <li class="nav-item">
+                                                <a class="nav-link" href="/user/logout">
+                                                        <button class="btn btn-outline-danger">
+                                                                Log out
+                                                        </button>
+                                                </a>
+                                        </li>
+                                </ul>
 
                 </ul>
 

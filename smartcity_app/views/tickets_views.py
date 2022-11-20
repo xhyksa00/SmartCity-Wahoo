@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from ..models import Ticket, User
 from .helpers import getCurrentUserDict
 from django.contrib import messages
-from ..forms import ticket_forms
+# from ..forms import ticket_forms
 
 def list_tickets(request: HttpRequest) -> HttpResponse:
     tickets = Ticket.objects.all()

@@ -3,29 +3,27 @@
 
 
 
-<h1>Information about user</h1>
-<div class="top-50 start-50">
-    Name : <strong>{{ name }}</strong> <br>
-    {% if role != "officer" %}
-    Surname: <strong>{{ surname }}</strong> <br>
-    {% else %}
-    Surname:
-    <form action="." method="POST">
-        <select name="myselect" id="myselect" onchange="this.form.submit()">
-            <option value="1">Citize</option>
-            <option value="2">Technician</option>
-        </select>
-    </form>
-    {% endif %}
-    Role: <strong>{{ role }}</strong> <br>
-</div>
+        <h1>Information about user</h1>
+        <div class="top-50 start-50">
+            Name : <strong>{{ name }}</strong> <br>
+            Surname: <strong>{{ surname }}</strong> <br>
+            {% if roleCurrent == "officer"  and role != "officer" %}
+                <form action="." method="POST">
+                    {% csrf_token %}
+                    {{form}}
+                </form>
+            {% else %}
+                Role:
+                 <strong>{{ role }}</strong> <br>
+            {% endif %}
+        </div>
 
-{% if owner %}
-<div class="mt-3">
-    <a href="#"><button type="button" class="btn btn-primary me-2">Edit profile</button></a>
-    <a href="#"><button type="button" class="btn btn-danger">Delete profile</button></a>
-</div>
-{% endif %}
+        {% if owner %}
+            <div class="mt-3">
+                <a href="/user/edit/{{id}}/"><button type="button" class="btn btn-outline-primary me-2">Edit profile</button></a>
+                <a href="/user/delete/{{id}}/"><button type="button" class="btn btn-outline-danger">Delete account</button></a>
+            </div>
+        {% endif %}
 
 </div>
 
