@@ -92,6 +92,9 @@ def register(request):
 
 def viewUser(request, id):
     currentUserData = getCurrentUserDict(request)
+    if currentUserData == {}:
+        messages.error(request, "You need to log in to visit this page.")
+        return HttpResponseRedirect('/user/login/')
 
     if request.method == "POST":
         form = OfficerRoleForm(request.POST)
@@ -101,9 +104,6 @@ def viewUser(request, id):
             changedUser.save()
             return HttpResponseRedirect(f'/user/{id}/')
 
-    if currentUserData == {}:
-        messages.error(request, "You need to log in to visit this page.")
-        return HttpResponseRedirect('/user/login/')
 
     requestedUserData = User.objects.filter(id = id).values().first()
     if not requestedUserData:

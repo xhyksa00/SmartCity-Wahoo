@@ -24,3 +24,15 @@ class ChangePasswordForm(forms.Form):
         super(ChangePasswordForm, self).__init__(*args, **kwargs)
         for fieldName in self.Meta.fields:
             self.fields[fieldName].widget.attrs['class'] = 'form-control'
+
+class RoleChangeForm(forms.Form):
+    class Meta:
+        fields = ['role']
+        choices = [('Citizen','Citizen'),('Technician', 'Technician'), ('Officer', 'Officer')]
+
+    role = forms.ChoiceField(choices=Meta.choices)
+
+    def __init__(self, *args, **kwargs):
+        super(RoleChangeForm, self).__init__(*args, **kwargs)
+        for fieldName in self.Meta.fields:
+            self.fields[fieldName].widget.attrs['onchange'] =  'this.form.submit()'

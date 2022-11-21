@@ -1,0 +1,32 @@
+{% extends "admin_base.html" %}
+{% block content %}
+
+<style>
+    .table-row {
+        cursor: pointer;
+    }
+</style>
+
+<table class="table rounded table-hover table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Surname</th>
+            <th scope="col">Role</th>
+            <th scope="col">ID</th>
+        </tr>
+    </thead>
+    <tbody class="bg-body">
+        {% for user in users %}
+        <tr class="table-row" onclick="window.location='/admin/user/{{user.id}}/'">
+            <td>{{user.name}}</td>
+            <td>{{user.surname}}</td>
+            <td>{{user.role}}</td>
+            <td>{{user.id}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock content %}

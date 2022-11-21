@@ -1,4 +1,4 @@
 
 
 def isLoggedIn(request):
-    return 'adminName' in request.session
+    return 'adminLoggedIn' in request.session and request.session['adminLoggedIn']

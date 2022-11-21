@@ -32,7 +32,7 @@ class RegisterForm(forms.Form):
 class OfficerRoleForm(forms.Form):
     class Meta:
         fields = ['role']
-        choices = [('citizen','Citizen'),('technician', 'Technician')]
+        choices = [('Citizen','Citizen'),('Technician', 'Technician')]
 
     role = forms.ChoiceField(choices=Meta.choices)
 
@@ -40,7 +40,6 @@ class OfficerRoleForm(forms.Form):
         super(OfficerRoleForm, self).__init__(*args, **kwargs)
         for fieldName in self.Meta.fields:
             self.fields[fieldName].widget.attrs['onchange'] =  'this.form.submit()'
-            fields = ['email','first_name', 'surname', 'password', 'confirm_password']
 
 
 
