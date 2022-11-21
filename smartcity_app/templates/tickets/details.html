@@ -3,8 +3,15 @@
 
 <h1>Ticket details</h1>
 <div class="top-50 start-50">
-    Title : <strong>{{ title }}</strong> <br>
-    Description: <strong>{{ description }}</strong> <br>
+    Title : <strong>{{ ticket.title }}</strong> <br>
+    Description: <strong>{{ ticket.description }}</strong> <br>
+    Status: {{ ticket.state }} <br>
+    Date Created: {{ ticket.created_timestamp }} <br>
+    Priority: {{ ticket.priority }} <br>
+    Author: {{ ticket.authorid.name }} {{ ticket.authorid.surname }}<br>
+    {% if currentUserData.role in 'Officer,Technician' %}
+    Assigned Service Request: {{ serviceRequest.id }}<br>
+    {% endif %}
 </div>
 
 <!-- {% if owner %}

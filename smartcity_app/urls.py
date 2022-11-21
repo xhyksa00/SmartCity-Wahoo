@@ -10,13 +10,12 @@ userUrls = [
     path('user/logout/', user_views.logout, name='user-logout'),
     path('user/edit/<int:id>/', user_views.editProfile, name='user-edit'),
     path('user/delete/<int:id>/', user_views.deleteAccount, name='user-delete'),
-    path('user/edit/password/<int:id>/',
-         user_views.changePassword, name='user-change-password'),
+    path('user/edit/password/<int:id>/', user_views.changePassword, name='user-change-password'),
 ]
 
 ticketsUrls = [
     path('tickets/list/', tickets_views.list_tickets, name='list-tickets'),
-    path('tickets/<int:id>/', tickets_views.show_ticket, name='ticket-details'),
+    path('tickets/list/<int:id>/', tickets_views.show_ticket, name='ticket-details'),
     path('tickets/create', tickets_views.create_ticket, name='create-ticket'),
 ]
 

@@ -8,23 +8,27 @@
 </style>
 
 <table class="table rounded table-hover table-striped">
-    <thead class="text-center">
+    <thead>
         <tr>
             <th scope="col">Title</th>
             <th scope="col">Created</th>
             <th scope="col">Priority</th>
+            {% if currentUserData.role in 'Officer,Technician' %}
             <th scope="col">Service Request</th>
+            {% endif %}
             <th scope="col">Status</th>
         </tr>
     </thead>
     <tbody class="bg-body">
         {% for ticket in tickets %}
-        <tr class="table-row" onclick="window.location='{{ticket.id}}'">
+        <tr class="table-row" onclick="window.location='{{ticket.id}}/'">
             <td>{{ticket.title}}</td>
             <td>{{ticket.created_timestamp}}</td>
-            <td class="text-center">{{ticket.priority}}</td>
-            <td class="text-center">{{ticket.service_request}}</td>
-            <td class="text-center">{{ticket.state}}</td>
+            <td>{{ticket.priority}}</td>
+            {% if currentUserData.role in 'Officer,Technician' %}
+            <td>{{ticket.service_request}}</td>
+            {% endif %}
+            <td>{{ticket.state}}</td>
         </tr>
         {% endfor %}
     </tbody>
