@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadReque
 from bcrypt import hashpw, gensalt, checkpw
 from django.contrib import messages
 from .helpers import isLoggedIn
-from .forms import LoginForm, ChangePasswordForm, RoleChangeForm
+from .forms import LoginForm, ChangePasswordForm, RoleChangeForm, UserFilterForm
 from .models import AdminInfo, User
 
 # Create your views here.
@@ -100,10 +100,42 @@ def usersList(request):
         'isLoggedIn': True,
     }
 
-    users = User.objects.all()
+    usersSet = User.objects
+    if request.method == 'GET':
+        form = UserFilterForm(request.GET)
+        if form.is_valid():
+            cln_data = form.cleaned_data
 
+            if cln_data['name']:
+                usersSet = usersSet.filter(name__icontains = cln_data['name'])
+
+            if cln_data['surname']:
+                usersSet = usersSet.filter(surname__icontains = cln_data['surname'])
+
+            if cln_data['role'] and cln_data['role'] != 'any':
+                usersSet = usersSet.filter(role = cln_data['role'])
+
+            if cln_data['id']:
+                usersSet = usersSet.filter(id = cln_data['id'])
+
+            asc_char = ''
+            if cln_data['order'] == 'descending':
+                asc_char = '-'
+
+            if cln_data['order_by']:
+                usersSet = usersSet.order_by(asc_char + cln_data['order_by'])
+
+
+
+    # else:
+    #     form = UserFilterForm()
+    #     context['filter_form'] = form
+    #     users = User.objects.all()
+    #     context['users'] = users
+
+    users = usersSet.all()
     context['users'] = users
-
+    context['filter_form'] = form
     return render(request,'users_list.html', context)
 
 def viewUser(request, id):

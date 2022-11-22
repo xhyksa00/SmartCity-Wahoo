@@ -43,17 +43,24 @@ class RoleChangeForm(forms.Form):
             self.fields[fieldName].widget.attrs['onchange'] = 'this.form.submit()'
 
 
-class UserFiltrationForm(forms.Form):
+class UserFilterForm(forms.Form):
 
     class Meta:
-        fields = ['name','surname','role', 'id']
-        role_choices = [('Citizen', 'Citizen'), ('Technician', 'Technician'), ('Officer', 'Officer')]
-        sort_choices = [('name', 'Name'),('surname', 'Surname'),('role', 'Role'), ('id', 'ID')]
-        order_choices = [('descending', 'Descending'),('ascending', 'Ascending')]
+        fields = ['name','surname','role', 'id', 'order_by', 'order']
+        role_choices = [('any','Any'),('Citizen', 'Citizen'), ('Technician', 'Technician'), ('Officer', 'Officer')]
+        order_choices = [('id', 'ID'),('name', 'Name'),('surname', 'Surname'),('role', 'Role') ]
+        ascend_choices = [('ascending', 'Ascending'),('descending', 'Descending')]
 
     name = forms.CharField()
     surname = forms.CharField()
     role = forms.ChoiceField(choices=Meta.role_choices)
     id = forms.CharField(widget= forms.NumberInput())
-    sort_by = forms.ChoiceField(choices=Meta.role_choices)
-    order = forms.ChoiceField(choices=Meta.role_choices)
+    order_by = forms.ChoiceField(choices=Meta.order_choices)
+    order = forms.ChoiceField(choices=Meta.ascend_choices)
+
+    def __init__(self, *args, **kwargs):
+        super(UserFilterForm, self).__init__(*args, **kwargs)
+        for fieldName in self.Meta.fields:
+            self.fields[fieldName].widget.attrs['class'] = 'form-control'
+            self.fields[fieldName].required = False
+

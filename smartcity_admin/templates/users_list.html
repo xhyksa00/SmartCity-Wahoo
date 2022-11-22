@@ -1,32 +1,42 @@
-{% extends "admin_base.html" %}
-{% block content %}
+{% extends "admin_base.html" %} {% block content %}
 
 <style>
-    .table-row {
-        cursor: pointer;
-    }
+  .table-row {
+    cursor: pointer;
+  }
 </style>
 
-<table class="table rounded table-hover table-striped">
+<form action="." method="GET">
+    {{ filter_form}}
+    
+    <div class="pe-2 col text-center">
+        <button type="submit" class="btn btn-primary end-50 mt-2">Submit</button>
+    </div>
+</form>
+
+  <table class="table rounded table-hover table-striped">
     <thead>
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Surname</th>
-            <th scope="col">Role</th>
-            <th scope="col">ID</th>
-        </tr>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Surname</th>
+        <th scope="col">Role</th>
+        <th scope="col">ID</th>
+      </tr>
     </thead>
     <tbody class="bg-body">
-        {% for user in users %}
-        <tr class="table-row" onclick="window.location='/admin/user/{{user.id}}/'">
-            <td>{{user.name}}</td>
-            <td>{{user.surname}}</td>
-            <td>{{user.role}}</td>
-            <td>{{user.id}}</td>
-        </tr>
-        {% endfor %}
+      {% for user in users %}
+      <tr
+        class="table-row"
+        onclick="window.location='/admin/user/{{user.id}}/'"
+      >
+        <td>{{user.name}}</td>
+        <td>{{user.surname}}</td>
+        <td>{{user.role}}</td>
+        <td>{{user.id}}</td>
+      </tr>
+      {% endfor %}
     </tbody>
-</table>
+  </table>
 
-
-{% endblock content %}
+  {% endblock content %}
+</div>
