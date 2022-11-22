@@ -10,12 +10,13 @@ from .helpers import getCurrentUserDict
 # Create your views here.
 
 def login(request):
+    context = {
+        'title' : 'Login'
+    }
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            context = {
-                'form' : form,                
-            }
+            context['form'] = form                
             email = form.cleaned_data['email']
             pwd = form.cleaned_data['password']
 
@@ -28,6 +29,7 @@ def login(request):
                 request.session['userRole'] = loginData.first().userid.role
                 request.session['userName'] = loginData.first().userid.name
                 request.session['userSurname'] = loginData.first().userid.surname
+                request.session.set_expiry(0)
 
                 messages.success(request, 'Login succesfull.')
                 return HttpResponseRedirect('/')
@@ -37,21 +39,20 @@ def login(request):
         else:
             return HttpResponseBadRequest()
     else:
-        context = {
-            'form' : LoginForm(),
-        }
+        context['form'] = LoginForm()
         return render(request, 'user/login.html', context=context)
 
 def register(request):
+    context = {
+        'title' : 'Register'
+    }
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
 
 
-            context = { 
-                'form' : form,
-            }
+            context['form'] = form
 
             pwd = form.cleaned_data['password']
             if( pwd == form.cleaned_data['confirm_password']):
@@ -84,9 +85,9 @@ def register(request):
                 messages.error(request, 'Passwords do not match.')
                 return render(request, 'user/register.html', context)
     else:
-        context = {'pwdFail' : False,
-        'emailTaken': False,
-        'form' : RegisterForm()}
+        context['pwdFail'] = False
+        context['emailTaken'] = False
+        context['form'] = RegisterForm()
         return render(request, 'user/register.html', context=context)
 
 
@@ -95,6 +96,10 @@ def viewUser(request, id):
     if currentUserData == {}:
         messages.error(request, "You need to log in to visit this page.")
         return HttpResponseRedirect('/user/login/')
+
+    context = {
+        'title' : 'View user'
+    }
 
     if request.method == "POST":
         form = OfficerRoleForm(request.POST)
@@ -109,7 +114,7 @@ def viewUser(request, id):
     if not requestedUserData:
         return HttpResponseBadRequest("User with selected id does not exist")
 
-    context = requestedUserData
+    context = {**requestedUserData, **context}
     context['currentUserData'] = currentUserData
 
 
@@ -131,6 +136,9 @@ def logout(request):
     return HttpResponseRedirect('/user/login/')
 
 def editProfile(request, id):
+    context = {
+        'title' : 'Edit account'
+    }
     currentUserData = getCurrentUserDict(request)
     if currentUserData == {}:
         messages.warning(request, "You need to log in to visit this page.")
@@ -152,10 +160,8 @@ def editProfile(request, id):
     else:
         a = User.objects.filter(id = id).all().first()
         form = EditAccountForm(instance=a)
-        context = {
-            'currentUserData': currentUserData,
-            'form': form
-        }
+        context['currentUserData']= currentUserData,
+        context['form']= form
 
         return render(request,'user/simpleForm.html',context)
 
@@ -180,13 +186,17 @@ def deleteAccount(request, id): #TODO: confirmation?
 def changePassword(request, id):
     currentUserData = getCurrentUserDict(request)
     
+    context = {
+        'title' : 'Change password'
+    }
+
     if currentUserData == {} or currentUserData['id'] != id:
         messages.error(request, 'You do not have permission to visit this page.')
         return HttpResponseRedirect('/')
 
-    context = {
-        'currentUserData': currentUserData,
-    }
+
+    context['currentUserData']= currentUserData
+
     if request.method == 'POST':
         form = ChangePasswordForm(request.POST)
 
