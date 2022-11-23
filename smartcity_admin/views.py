@@ -24,6 +24,7 @@ def login(request):
 
             if (checkpw(pwdInput.encode('utf8'), pwd.encode('utf8'))):
                 request.session['adminLoggedIn'] = True
+                request.session.set_expiry(0)
                 messages.success(request, 'Logged in as administrator.')
                 return HttpResponseRedirect('/admin/user/list/')
             else:
