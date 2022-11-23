@@ -1,3 +1,4 @@
+from ..models import User
 
 def getCurrentUserDict(request):
 
@@ -18,4 +19,5 @@ def isUserLogged(request):
 
     return True
 
-
+def getLoggedUserObject(request):
+    return User.objects.filter(id=request.session['userId']).first()

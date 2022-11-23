@@ -1,0 +1,22 @@
+{% extends "navbar_base.html" %}
+{% block content %}
+
+<h1>Create Ticket</h1>
+<form action="" method="POST">
+    {% csrf_token %}
+    <div style="width: 300px;">
+        <label for="{{ form.title.id_for_label }}">Title:</label>
+        {{ form.title }}
+    </div>
+    <div style="width: 200px;">
+        <label for="{{ form.priority.id_for_label }}">Priority:</label>
+        {{ form.priority }}
+    </div>
+    <div style="width: 800px;">
+        <label for="{{ form.description.id_for_label }}">Description:</label>
+        {{ form.description }}
+    </div>
+    <input type="submit" value="Submit" class="btn btn-primary mt-2">
+</form>
+
+{% endblock content %}

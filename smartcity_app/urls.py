@@ -16,7 +16,7 @@ userUrls = [
 ticketsUrls = [
     path('tickets/list/', tickets_views.list_tickets, name='list-tickets'),
     path('tickets/list/<int:id>/', tickets_views.show_ticket, name='ticket-details'),
-    path('tickets/create', tickets_views.create_ticket, name='create-ticket'),
+    path('tickets/create/', tickets_views.create_ticket, name='create-ticket'),
 ]
 
 rootUrl = [
@@ -29,4 +29,5 @@ testUrls = [
 imageUrls = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # URLConf VVV #note: For some reason, imageUrls has to be last in this concatenation...
+# ^^^ #note: Probably cause it's not an array, and python does some implicit shit
 urlpatterns = userUrls + testUrls + ticketsUrls + rootUrl + imageUrls

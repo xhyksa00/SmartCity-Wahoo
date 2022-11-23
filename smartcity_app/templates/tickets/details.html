@@ -14,12 +14,12 @@
     {% endif %}
 </div>
 
-<!-- {% if owner %}
+{% if currentUserData.id == ticket.authorid %}
 <div class="mt-3">
-    <button type="button" class="btn btn-primary me-2">Edit profile</button>
-    <button type="button" class="btn btn-danger">Delete profile</button>
+    <a href="{% url 'edit-ticket' %}"><button type="button" class="btn btn-primary me-2">Edit Ticket</button></a>
+    <!-- <button type="button" class="btn btn-danger">Delete Ticket</button> -->
 </div>
-{% endif %} -->
+{% endif %}
 
 </div>
 
