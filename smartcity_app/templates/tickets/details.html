@@ -9,13 +9,83 @@
     Date Created: {{ ticket.created_timestamp }} <br>
     Priority: {{ ticket.priority }} <br>
     Author: {{ ticket.authorid.name }} {{ ticket.authorid.surname }}<br>
-    Images:
-    {% for img in images %}
-        <img src="{{ img.url.url }}">
-    {% endfor %}
     {% if currentUserData.role in 'Officer,Technician' %}
     Assigned Service Request: {{ serviceRequest.id }}<br>
-    {% endif %}
+    {% endif %} <br>
+    <!-- {% for img in images %}
+    <div style="height: 200px; width: 200px; overflow: hidden;">
+        <a href="{{ img.url.url }}">
+            <img src="{{ img.url.url }}">
+        </a>
+    </div>
+    {% endfor %} -->
+    <!-- <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" style=" width: 500px; height: 350px;">
+        <div class="carousel-inner" style=" width: 500px; height: 350px !important;">
+            {% for img in images %}
+            {% if forloop.first %}
+            <div class="carousel-item active">
+            {% else %}
+            <div class="carousel-item">
+            {% endif %}
+                <img src="{{ img.url.url }}" class="d-block w-100 h-auto m-auto">
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div> -->
+
+    <!-- Gallery -->
+    <!-- <div class="row">
+        <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(73).webp"
+                class="w-100 shadow-1-strong rounded mb-4" alt="Boat on Calm Water" />
+
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/Vertical/mountain1.webp"
+                class="w-100 shadow-1-strong rounded mb-4" alt="Wintry Mountain Landscape" />
+        </div>
+
+        <div class="col-lg-4 mb-4 mb-lg-0">
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/Vertical/mountain2.webp"
+                class="w-100 shadow-1-strong rounded mb-4" alt="Mountains in the Clouds" />
+
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(73).webp"
+                class="w-100 shadow-1-strong rounded mb-4" alt="Boat on Calm Water" />
+        </div>
+
+        <div class="col-lg-4 mb-4 mb-lg-0">
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(18).webp"
+                class="w-100 shadow-1-strong rounded mb-4" alt="Waves at Sea" />
+
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/Vertical/mountain3.webp"
+                class="w-100 shadow-1-strong rounded mb-4" alt="Yosemite National Park" />
+        </div>
+    </div>
+    Gallery -->
+
+    <!-- Page Content -->
+    <div class="container">
+        <h1 class="fw-light text-center text-lg-start mt-4 mb-0">Pictures</h1>
+        <hr class="mt-2 mb-5">
+        <div class="row text-center text-lg-start">
+            {% for img in images %}
+            <div class="col-lg-3 col-md-4 col-6">
+                <a href="{{ img.url.url }}" class="d-block mb-4 h-100">
+                    <img class="img-fluid img-thumbnail" src="{{ img.url.url }}" alt="">
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
 </div>
 
 {% if currentUserData.id == ticket.authorid %}
