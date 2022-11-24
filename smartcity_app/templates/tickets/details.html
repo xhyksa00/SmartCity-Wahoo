@@ -9,6 +9,10 @@
     Date Created: {{ ticket.created_timestamp }} <br>
     Priority: {{ ticket.priority }} <br>
     Author: {{ ticket.authorid.name }} {{ ticket.authorid.surname }}<br>
+    Images:
+    {% for img in images %}
+        <img src="{{ img.url.url }}">
+    {% endfor %}
     {% if currentUserData.role in 'Officer,Technician' %}
     Assigned Service Request: {{ serviceRequest.id }}<br>
     {% endif %}

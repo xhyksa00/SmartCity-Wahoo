@@ -1,5 +1,5 @@
 from django import forms
-from ..models import Ticket
+from ..models import Ticket, Image
 
 PRIORITY_CHOICES = [
     ('Lowest', 'Lowest'),
@@ -27,5 +27,16 @@ class CreateTicketForm(forms.ModelForm):
                 'rows': '11',
                 'cols': '90',
                 'maxlength': '1000'
+            }),
+        }
+
+class UploadImageForm(forms.ModelForm):
+    class Meta:
+        model = Image
+        fields = ['url']
+        widgets = {
+            'url': forms.ClearableFileInput(attrs={
+                # 'class':'form-control',
+                'multiple': True
             }),
         }

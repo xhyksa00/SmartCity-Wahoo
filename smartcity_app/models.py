@@ -131,13 +131,14 @@ class DjangoSession(models.Model):
         db_table = 'django_session'
 
 
-class Images(models.Model):
-    name = models.CharField(primary_key=True, max_length=50)
+class Image(models.Model):
+    id = models.AutoField(primary_key=True)
+    url = models.ImageField(null=True, blank=True, upload_to='images/')
     ticketid = models.ForeignKey('Ticket', models.DO_NOTHING, db_column='ticketId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
-        db_table = 'images'
+        db_table = 'image'
 
 
 class LoginInfo(models.Model):
@@ -153,7 +154,7 @@ class LoginInfo(models.Model):
 class ServiceRequest(models.Model):
     id = models.AutoField(primary_key=True)
     description = models.CharField(max_length=255)
-    created_timestamp = models.DateTimeField(blank=True, null=True)
+    created_timestamp = models.DateTimeField(blank=True, null=True, auto_now_add=True)
     days_remaining = models.IntegerField(blank=True, null=True)
     price = models.IntegerField(blank=True, null=True)
     priority = models.CharField(max_length=7)
@@ -170,7 +171,7 @@ class ServiceRequest(models.Model):
 class ServiceRequestComments(models.Model):
     id = models.AutoField(primary_key=True)
     text = models.CharField(max_length=255, blank=True, null=True)
-    created_timestamp = models.DateTimeField(blank=True, null=True)
+    created_timestamp = models.DateTimeField(blank=True, null=True, auto_now_add=True)
     ticketid = models.ForeignKey('Ticket', models.DO_NOTHING, db_column='ticketId', blank=True, null=True)  # Field name made lowercase.
     authorid = models.ForeignKey('User', models.DO_NOTHING, db_column='authorId', blank=True, null=True)  # Field name made lowercase.
     requestid = models.ForeignKey(ServiceRequest, models.DO_NOTHING, db_column='requestId', blank=True, null=True)  # Field name made lowercase.
@@ -184,7 +185,7 @@ class Ticket(models.Model):
     title = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True, max_length=1000)
     state = models.CharField(max_length=17, blank=True, null=True)
-    created_timestamp = models.DateTimeField(blank=True, null=True)
+    created_timestamp = models.DateTimeField(blank=True, null=True, auto_now_add=True)
     priority = models.CharField(max_length=7)
     authorid = models.ForeignKey('User', models.DO_NOTHING, db_column='authorId', blank=True, null=True)  # Field name made lowercase.
 
@@ -196,7 +197,7 @@ class Ticket(models.Model):
 class TicketComments(models.Model):
     id = models.AutoField(primary_key=True)
     text = models.CharField(max_length=255, blank=True, null=True)
-    created_timestamp = models.DateTimeField(blank=True, null=True)
+    created_timestamp = models.DateTimeField(blank=True, null=True, auto_now_add=True)
     ticketid = models.ForeignKey(Ticket, models.DO_NOTHING, db_column='ticketId', blank=True, null=True)  # Field name made lowercase.
     authorid = models.ForeignKey('User', models.DO_NOTHING, db_column='authorId', blank=True, null=True)  # Field name made lowercase.
 
