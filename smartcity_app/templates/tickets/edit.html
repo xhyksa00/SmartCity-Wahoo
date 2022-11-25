@@ -1,0 +1,27 @@
+{% extends "navbar_base.html" %}
+{% block content %}
+
+<h1>Edit Ticket</h1>
+<form action="" method="POST">
+<!-- <form action="" method="POST" enctype="multipart/form-data"> -->
+    {% csrf_token %}
+    <div style="width: 300px;">
+        <label for="{{ ticket_form.title.id_for_label }}">Title:</label>
+        {{ ticket_form.title }}
+    </div>
+    <div style="width: 200px;">
+        <label for="{{ ticket_form.priority.id_for_label }}">Priority:</label>
+        {{ ticket_form.priority }}
+    </div>
+    <div style="width: 800px;">
+        <label for="{{ ticket_form.description.id_for_label }}">Description:</label>
+        {{ ticket_form.description }}
+    </div>
+    <!-- <div class="mt-3">
+        <label for="{{ image_form.image.id_for_label }}">Image:</label>
+        {{ image_form.url }}
+    </div> -->
+    <input type="submit" value="Submit" class="btn btn-primary mt-3">
+</form>
+
+{% endblock content %}

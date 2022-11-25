@@ -7,8 +7,12 @@ from ..forms.ticket_forms import CreateTicketForm, UploadImageForm
 from django.core.files.storage import FileSystemStorage
 
 def list_tickets(request: HttpRequest) -> HttpResponse:
-    tickets = Ticket.objects.all()
     currentUserData = getCurrentUserDict(request)
+    if currentUserData == {}:
+        messages.warning(request, "You need to log in to visit this page.")
+        return HttpResponseRedirect('/user/login/')
+
+    tickets = Ticket.objects.all()
     context = {
         'tickets': tickets,
         'currentUserData': currentUserData,
@@ -17,21 +21,31 @@ def list_tickets(request: HttpRequest) -> HttpResponse:
     return render(request, 'tickets/list.html', context)
 
 def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
-    details = Ticket.objects.filter(id=id).select_related('authorid').all().first()
-    serviceRequest = ServiceRequest.objects.filter(ticketid = id).all().first()
     currentUserData = getCurrentUserDict(request)
-    images = Image.objects.filter(ticketid=details.id).all()
+    if currentUserData == {}:
+        messages.warning(request, "You need to log in to visit this page.")
+        return HttpResponseRedirect('/user/login/')
+
+    ticket = Ticket.objects.filter(id=id).select_related('authorid').all().first()
+    serviceRequest = ServiceRequest.objects.filter(ticketid = id).all().first()
+    images = Image.objects.filter(ticketid=ticket.id).all()
+
+    owner = (ticket.authorid_id == currentUserData['id'])
     context = {
-        'ticket': details,
+        'ticket': ticket,
         'serviceRequest': serviceRequest,
         'currentUserData': currentUserData,
-        'images': images
+        'images': images,
+        'owner': owner
     }
 
     return render(request, 'tickets/details.html', context)
 
 def create_ticket(request: HttpRequest) -> HttpResponse:
-
+    currentUserData = getCurrentUserDict(request)
+    if currentUserData == {}:
+        messages.warning(request, "You need to log in to visit this page.")
+        return HttpResponseRedirect('/user/login/')
     if request.method == 'POST':
         ticket_form = CreateTicketForm(request.POST)
         image_form = UploadImageForm(request.POST, request.FILES)
@@ -41,7 +55,7 @@ def create_ticket(request: HttpRequest) -> HttpResponse:
                 description = ticket_form.cleaned_data['description'],
                 priority = ticket_form.cleaned_data['priority'],
                 state = 'Open',
-                authorid = getLoggedUserObject(request)
+                authorid_id = request.session['userId'],
             )
             ticket.save()
             
@@ -62,7 +76,35 @@ def create_ticket(request: HttpRequest) -> HttpResponse:
     
     context = {
         'ticket_form': ticket_form,
-        'image_form': image_form
+        'image_form': image_form,
+        'currentUserData': currentUserData
     }
     return render(request, 'tickets/create.html', context)
 
+def edit_ticket(request: HttpRequest, id:int) -> HttpResponse:
+    currentUserData = getCurrentUserDict(request)
+    if currentUserData == {}:
+        messages.warning(request, "You need to log in to visit this page.")
+        return HttpResponseRedirect('/user/login/')
+    
+    ticket = Ticket.objects.filter(id=id).first()
+
+    if currentUserData['id'] != ticket.authorid_id:
+        messages.error(request, 'You do not have permission to visit this page.')
+        return HttpResponseRedirect('/')
+
+    if request.method == "POST":
+        ticket_form = CreateTicketForm(request.POST, instance=ticket)
+        ticket_form.save()
+        messages.success(request,'Ticket changed.')
+        return HttpResponseRedirect(f'/tickets/list/{id}/')
+
+    else:
+        ticket_form = CreateTicketForm(instance=ticket)
+
+    context = {
+        'ticket_form': ticket_form,
+        'currentUserData': currentUserData
+    }
+
+    return render(request, 'tickets/edit.html', context)

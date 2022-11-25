@@ -28,7 +28,19 @@
             {% if currentUserData.role in 'Officer,Technician' %}
             <td>{{ticket.service_request}}</td>
             {% endif %}
-            <td>{{ticket.state}}</td>
+            <td>
+                {% if ticket.state == 'Closed: Duplicate' or ticket.state == 'Closed: Denied' %}
+                <span class="badge bg-danger"> {{ ticket.state }} </span>
+                {% elif ticket.state == 'Closed: Fixed' %}
+                <span class="badge bg-success"> {{ ticket.state }} </span>
+                {% elif ticket.state == 'Waiting' %}
+                <span class="badge bg-secondary"> {{ ticket.state }} </span>
+                {% elif ticket.state == 'In Progress' %}
+                <span class="badge bg-warning"> {{ ticket.state }} </span>
+                {% elif ticket.state == 'Open' %}
+                <span class="badge bg-primary"> {{ ticket.state }} </span>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>
