@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS login_info;
+DROP TABLE IF EXISTS admin_info;
 DROP TABLE IF EXISTS images;
 DROP TABLE IF EXISTS service_request_comments;
 DROP TABLE IF EXISTS ticket_comments;
@@ -6,11 +7,14 @@ DROP TABLE IF EXISTS service_request;
 DROP TABLE IF EXISTS ticket;
 DROP TABLE IF EXISTS user;
 
+DROP TRIGGER IF EXISTS set_ticket_in_progress;
+DROP TRIGGER IF EXISTS set_request_technician_null;
+
 CREATE TABLE user (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(20) NOT NULL,
     surname VARCHAR(20) NOT NULL,
-    role  VARCHAR(10) CHECK( role IN ('citizen','officer','technician','admin'))
+    role ENUM ('Citizen','Officer','Technician') DEFAULT 'Citizen'
 );
 
 CREATE TABLE login_info(
@@ -19,34 +23,39 @@ CREATE TABLE login_info(
     FOREIGN KEY (userId)
         REFERENCES user(id)
         ON DELETE CASCADE,
-    password VARCHAR(100) NOT NULL
+    password VARCHAR(60) NOT NULL
+);
+
+CREATE TABLE admin_info(
+    username VARCHAR(5) PRIMARY KEY NOT NULL DEFAULT 'admin',
+    password VARCHAR(60) NOT NULL
 );
 
 CREATE TABLE ticket (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(50) NOT NULL,
-    description VARCHAR(255) NOT NULL,
-    state  VARCHAR(13) CHECK(
-        state IN ('open','waiting','inProgress','cls-denied','cls-fixed','cls-duplicate')),
+    description TEXT(1000) NOT NULL,
+    state ENUM ('Open','Waiting','In Progress','Closed: Denied','Closed: Fixed','Closed: Duplicate'),
     created_timestamp TIMESTAMP DEFAULT current_timestamp,
-    priority  VARCHAR(7) CHECK( priority IN ('lowest','low','regular','high','highest')),
+    priority ENUM ('Lowest','Low','Medium','High','Highest') NOT NULL,
     authorId INT,
-    FOREIGN KEY (authorId) REFERENCES user(id) ON DELETE SET NULL,
-    service_request INT REFERENCES service_request(id)
+    FOREIGN KEY (authorId) REFERENCES user(id) ON DELETE SET NULL
 );
 
 CREATE TABLE service_request (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    description VARCHAR(255) NOT NULL,
+    description TEXT(1000) NOT NULL,
     created_timestamp TIMESTAMP DEFAULT current_timestamp,
     days_remaining INT DEFAULT 0,
     price INT DEFAULT 0,
-    priority VARCHAR(7) CHECK( priority IN ('lowest','low','regular','high','highest')),
-    state VARCHAR(10) CHECK( state IN ('open','inProgress','done')),
+    priority ENUM ('Lowest','Low','Medium','High','Highest') NOT NULL,
+    state ENUM ('Open', 'In Progress', 'Finished'),
+    ticketId INT,
+    FOREIGN KEY (ticketId) REFERENCES ticket(id) ON DELETE CASCADE,
     technicianId INT,
-    CONSTRAINT fk_technician FOREIGN KEY (technicianId) REFERENCES user(id) ON DELETE SET NULL,
+    FOREIGN KEY (technicianId) REFERENCES user(id) ON DELETE SET NULL,
     authorId INT,
-    CONSTRAINT fk_author FOREIGN KEY (authorId) REFERENCES user(id) ON DELETE SET NULL
+    FOREIGN KEY (authorId) REFERENCES user(id) ON DELETE SET NULL
 );
 
 CREATE TABLE ticket_comments (
@@ -71,62 +80,79 @@ CREATE TABLE service_request_comments (
     FOREIGN KEY (requestId) REFERENCES service_request(id) ON DELETE CASCADE
 );
 
-CREATE TABLE images (
-    name VARCHAR(50) PRIMARY KEY,
+CREATE TABLE image (
+#     name VARCHAR(50) PRIMARY KEY,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    url VARCHAR(255) NOT NULL,
     ticketId INT,
-    FOREIGN KEY (ticketId) REFERENCES ticket (id) ON DELETE CASCADE
+    FOREIGN KEY (ticketId) REFERENCES ticket(id) ON DELETE CASCADE
 );
 
--- triggers
-DROP TRIGGER IF EXISTS service_request_technician;
-CREATE TRIGGER service_request_technician
-    BEFORE
-    INSERT
-    ON service_request
-    FOR EACH ROW
-    BEGIN
-    DECLARE role VARCHAR(10);
-        SELECT c.role
-            INTO role
-            FROM user c
-            WHERE c.id = new.technicianId;
-        IF role != 'technician' THEN
-            SIGNAL SQLSTATE '45000' SET message_text = 'Assigned user is not a technician.';
-        END IF;
-    END;
+-- TRIGGERS
 
-DROP TRIGGER IF EXISTS service_request_author;
-CREATE TRIGGER service_request_author
-    BEFORE
-    INSERT
-    ON service_request
+-- sets Ticket state to 'In Progress' after
+-- a service request that references it is created
+CREATE TRIGGER set_ticket_in_progress
+    AFTER INSERT ON service_request
+    FOR EACH ROW
+    begin
+        DECLARE ticket_exists BOOLEAN;
+        SELECT 1 INTO ticket_exists
+        FROM ticket WHERE ticket.id = NEW.ticketId;
+
+        if ticket_exists = 1 then
+            UPDATE ticket
+            SET state = 'In Progress'
+            WHERE id = NEW.ticketId;
+        end if;
+    end;
+
+CREATE TRIGGER set_request_technician_null
+    BEFORE UPDATE ON user
     FOR EACH ROW
     BEGIN
-        DECLARE role VARCHAR(10);
-        SELECT c.role
-            INTO role
-            FROM user c
-            WHERE c.id = new.authorId;
-        IF role != 'officer' THEN
-            SIGNAL SQLSTATE '45000' SET message_text = 'Only officers can create service requests.';
+        DECLARE user_role VARCHAR(11);
+        SELECT role INTO user_role
+        FROM user WHERE user.id = NEW.id;
+
+        IF user_role = 'technician' THEN
+            UPDATE service_request
+            SET technicianId = NULL
+            WHERE technicianId = NEW.id;
         END IF;
     END;
 
 -- INSERT SAMPLE DATA
+
+-- ADMIN
+INSERT INTO admin_info (username, password)
+VALUES ('admin', '$2b$12$3Jjxd9gbeno3xFiGNzVaneqgStxPXTE551.aDNFWUTdagj4ukprve');
+
+-- USERS
 INSERT INTO user (name, surname, role)
-VALUES ('Jan', 'Novak', 'citizen');
+VALUES
+    ('Jan', 'Novak', 'citizen'),
+    ('Don Leopold', 'Juan Nemcek', 'citizen'),
+    ('Samko', 'Sadik', 'citizen'),
+    ('Tech', 'Nician', 'technician'),
+    ('Of', 'Ficer', 'officer');
+#     ('Ad', 'Min', 'admin');
+
 INSERT INTO login_info (email, userId, password)
-VALUES ('jan.novak@gmail.com', 1, '$2b$12$DNLUpKOzdfSWxx232ng3eee70n47lAZHvMGrq1Bwry2ZO/PPlekNS');
+VALUES
+    ('jan.novak@gmail.com', 1, '$2b$12$DNLUpKOzdfSWxx232ng3eee70n47lAZHvMGrq1Bwry2ZO/PPlekNS'),
+    ('don.juan@gmail.com', 2, '$2b$12$obxW/cGVbfI2WLP1rKJAVOhLHU3QkuxC58kJ5ZvwCd0pDJ8ROrbqS'),
+    ('s@s.s', 3, '$2b$12$cb/OKBCpExqNPAw8BRTCyOU/F7MKJlqh9MbwHRVBMinowCg1UaihK'),
+    ('tech@nician.com', 4, '$2b$12$A4PTGg5TFm1YecVbhgqviODRfu1SMOqnXQbk548kydUk6xBNaBzh.'),
+    ('of@ficer.com', 5, '$2b$12$s2hc9RGBLNj7SpasSGiZoOnW8zUkaLdfJRU0sr5K9xJk2NX1U32eS');
+#     ('ad@min.com', 6, '$2b$12$dvYUmELe4n5gUrf3koVFsuqjpCZWpnQQ7JfX7.688r948b0tijiza');
 
-INSERT INTO user (name, surname, role)
-VALUES ('Don Leopold', 'Juan Nemcek', 'technician');
-INSERT INTO login_info (email, userId, password)
-VALUES ('don.juan@gmail.com', 2, '$2b$12$obxW/cGVbfI2WLP1rKJAVOhLHU3QkuxC58kJ5ZvwCd0pDJ8ROrbqS');
-
-
-INSERT INTO ticket (title, description, state, authorId)
-VALUES ('Faulty street lamp', 'The street lamp on the corner of Sample Street and Made-up Ave. blinks rapidly for about 10 seconds every 5 or so minutes.',
-        'open', (SELECT id FROM user WHERE surname = 'Novak'));
-INSERT INTO ticket (title, description, state, authorId)
-VALUES ('Leaking hydrant', 'The hydrant on the corner of Sample Street and Made-up Ave. is leaking water slowly.',
-        'open', (SELECT id FROM user WHERE surname = 'Juan Nemcek'));
+-- TICKETS
+INSERT INTO ticket (title, description, state, priority, authorId)
+VALUES
+    (   'Faulty street lamp',
+        'The street lamp on the corner of Sample Street and Made-up Ave. blinks rapidly for about 10 seconds every 5 or so minutes.',
+        'Open', 'Lowest', 1),
+    (   'Leaking hydrant',
+        'The hydrant on the corner of Sample Street and Made-up Ave. is leaking water slowly.',
+        'Open', 'Medium', 2);
