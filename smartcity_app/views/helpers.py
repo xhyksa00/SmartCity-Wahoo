@@ -5,15 +5,17 @@ def getCurrentUserDict(request):
     if not isUserLogged(request):
         return {}
     
+    currentUser = getLoggedUserObject(request)
+
     return {
-        'role' : request.session['userRole'],
-        'name' : request.session['userName'],
-        'surname' : request.session['userSurname'],
+        'role' : currentUser.role,
+        'name' : currentUser.name,
+        'surname' : currentUser.surname,
         'id' : request.session['userId']
     }
 
 def isUserLogged(request):
-    if not 'userRole' in request.session or not 'userName' in request.session or not 'userSurname' in request.session or not 'userId' in request.session:
+    if  not 'userId' in request.session:
         request.session.flush()
         return False
 

@@ -20,15 +20,11 @@ def login(request):
             email = form.cleaned_data['email']
             pwd = form.cleaned_data['password']
 
-            loginData = LoginInfo.objects.filter(email = email).select_related('userid').all()
+            loginData = LoginInfo.objects.get(email = email)
         
 
-            if ( loginData and checkpw(pwd.encode('utf8'), loginData.first().password.encode('utf8')) ):
-                id = loginData.first().userid_id
-                request.session['userId'] = id
-                request.session['userRole'] = loginData.first().userid.role
-                request.session['userName'] = loginData.first().userid.name
-                request.session['userSurname'] = loginData.first().userid.surname
+            if ( loginData and checkpw(pwd.encode('utf8'), loginData.password.encode('utf8')) ):
+                request.session['userId'] = loginData.userid_id
                 request.session.set_expiry(0)
 
                 messages.success(request, 'Login succesfull.')
@@ -57,9 +53,9 @@ def register(request):
             pwd = form.cleaned_data['password']
             if( pwd == form.cleaned_data['confirm_password']):
 
-                loginData = LoginInfo.objects.filter(email = email).values()
+                loginData = LoginInfo.objects.filter(email = email).all()
                 if(loginData):
-                    messages.error(request, 'Email already taken, id = %s .' % loginData.first()['userid_id'])
+                    messages.error(request, 'Account with this e-mail adress already exists.')
                     return render(request, '/user/register.html', context)
 
                 user = User(
@@ -85,8 +81,6 @@ def register(request):
                 messages.error(request, 'Passwords do not match.')
                 return render(request, 'user/register.html', context)
     else:
-        context['pwdFail'] = False
-        context['emailTaken'] = False
         context['form'] = RegisterForm()
         return render(request, 'user/register.html', context=context)
 
