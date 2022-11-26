@@ -1,3 +1,7 @@
+# urls.py
+# Author: Leopold Nemcek, Rudolf Hyksa
+# Description: This file links specific url paths to view functions
+
 from django.urls import path
 from .views import rootpage_view, user_views, tickets_views
 from django.conf import settings

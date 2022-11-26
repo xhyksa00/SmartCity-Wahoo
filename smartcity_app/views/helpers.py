@@ -1,3 +1,7 @@
+# helpers.py
+# Author: Leopold Nemcek, Rudolf Hyksa
+# Description: This file adds helper functions for this app
+
 from ..models import User
 
 def getCurrentUserDict(request):
