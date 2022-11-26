@@ -1,0 +1,40 @@
+{% extends "navbar_base.html" %}
+{% block content %}
+
+<style>
+    .table-row {
+        cursor: pointer;
+    }
+</style>
+
+<table class="table rounded table-hover table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Ticket</th>
+            <th scope="col">Created</th>
+            <th scope="col">Priority</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody class="bg-body">
+        {% for request in requests %}
+        <tr class="table-row" onclick="window.location='{{request.id}}/'">
+            <td>{{request.title}}</td>
+            <td>{{request.created_timestamp}}</td>
+            <td>{{request.priority}}</td>
+            <td>
+                {% if request.state == 'Finished' %}
+                <span class="badge bg-success"> {{ request.state }} </span>
+                {% elif request.state == 'In Progress' %}
+                <span class="badge bg-warning"> {{ request.state }} </span>
+                {% elif request.state == 'Open' %}
+                <span class="badge bg-primary"> {{ request.state }} </span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock content %}
