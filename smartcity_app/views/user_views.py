@@ -1,14 +1,16 @@
+# user_views.py
+# Author: Leopold Nemcek
+# Description: View functions for user manipulation
+
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect,HttpResponseBadRequest
-from ..forms.user_forms import LoginForm, RegisterForm, OfficerRoleForm, EditAccountForm, ChangePasswordForm
+from ..forms.user_forms import LoginForm, RegisterForm, OfficerRoleForm, EditAccountForm, ChangePasswordForm, UserFilterForm
 from bcrypt import hashpw,gensalt,checkpw
 from ..models import LoginInfo, User
 from django.contrib import messages
 from .helpers import getCurrentUserDict
 
-
-# Create your views here.
-
+# View for logging in
 def login(request):
     context = {
         'title' : 'Login'
@@ -20,15 +22,12 @@ def login(request):
             email = form.cleaned_data['email']
             pwd = form.cleaned_data['password']
 
-            loginData = LoginInfo.objects.filter(email = email).select_related('userid').all()
+            # Get login info(email and password) from DB by email
+            loginData = LoginInfo.objects.filter(email = email).all()
         
-
+            #If login info was found and password checks out with the hashed password from DB
             if ( loginData and checkpw(pwd.encode('utf8'), loginData.first().password.encode('utf8')) ):
-                id = loginData.first().userid_id
-                request.session['userId'] = id
-                request.session['userRole'] = loginData.first().userid.role
-                request.session['userName'] = loginData.first().userid.name
-                request.session['userSurname'] = loginData.first().userid.surname
+                request.session['userId'] = loginData.first().userid_id
                 request.session.set_expiry(0)
 
                 messages.success(request, 'Login succesfull.')
@@ -42,6 +41,7 @@ def login(request):
         context['form'] = LoginForm()
         return render(request, 'user/login.html', context=context)
 
+# View for user registration
 def register(request):
     context = {
         'title' : 'Register'
@@ -55,13 +55,16 @@ def register(request):
             context['form'] = form
 
             pwd = form.cleaned_data['password']
+            # Password and confirm password has to match
             if( pwd == form.cleaned_data['confirm_password']):
 
-                loginData = LoginInfo.objects.filter(email = email).values()
+                # Check whether wmail isnt already in use
+                loginData = LoginInfo.objects.filter(email = email).all()
                 if(loginData):
-                    messages.error(request, 'Email already taken, id = %s .' % loginData.first()['userid_id'])
+                    messages.error(request, 'E-mail adress is already in use.')
                     return render(request, '/user/register.html', context)
 
+                # Create user in DB
                 user = User(
                     name = form.cleaned_data['first_name'],
                     surname = form.cleaned_data['surname'],
@@ -69,8 +72,10 @@ def register(request):
                 )
                 user.save()
 
+                # Create login info in DB
                 loginInfo = LoginInfo(
                     email = form.cleaned_data['email'],
+                    # This method hashes password with salt and then returns it in format <salt><hashed_password>, so we dont need to save salt separatedly
                     password = hashpw(form.cleaned_data['password'].encode('utf8'), gensalt()).decode('utf8'),
                     userid = user
                 )
@@ -85,12 +90,11 @@ def register(request):
                 messages.error(request, 'Passwords do not match.')
                 return render(request, 'user/register.html', context)
     else:
-        context['pwdFail'] = False
-        context['emailTaken'] = False
         context['form'] = RegisterForm()
         return render(request, 'user/register.html', context=context)
 
 
+# This view shows user profiles and allows officers to change their role between citizen and service technician
 def viewUser(request, id):
     currentUserData = getCurrentUserDict(request)
     if currentUserData == {}:
@@ -101,6 +105,7 @@ def viewUser(request, id):
         'title' : 'View user'
     }
 
+    # Role changing
     if request.method == "POST":
         form = OfficerRoleForm(request.POST)
         if form.is_valid():
@@ -118,7 +123,7 @@ def viewUser(request, id):
     context['currentUserData'] = currentUserData
 
 
-
+    # Saving whether the current user is visiting his own profile, so the template will know whether to show buttons for editation and deletion
     if(id == currentUserData['id']):
         context['owner']  = True
 
@@ -130,11 +135,12 @@ def viewUser(request, id):
     return render(request, 'user/viewUser.html', context)
 
 
-
+# Logout view
 def logout(request):
     request.session.flush()
     return HttpResponseRedirect('/user/login/')
 
+# View for editing profile
 def editProfile(request, id):
     context = {
         'title' : 'Edit account'
@@ -144,12 +150,15 @@ def editProfile(request, id):
         messages.warning(request, "You need to log in to visit this page.")
         return HttpResponseRedirect('/user/login/')
     
+    # only owner of the profile can edit it
     if currentUserData['id'] != id:
         messages.error(request, 'You do not have permission to visit this page.')
         return HttpResponseRedirect('/')
 
+    # using model form, editation is implemented easily
     if request.method == "POST":
         a = User.objects.filter(id = id).all().first()
+        # Get data from form, and fill out rest with the instance
         form = EditAccountForm(request.POST,instance=a)
         form.save()
         request.session['userName'] = form.cleaned_data['name']
@@ -166,8 +175,8 @@ def editProfile(request, id):
         return render(request,'user/simpleForm.html',context)
 
 
-
-def deleteAccount(request, id): #TODO: confirmation?
+# Account deletion
+def deleteAccount(request, id):
     currentUserData = getCurrentUserDict(request)
 
     if currentUserData['id'] == id :
@@ -183,6 +192,7 @@ def deleteAccount(request, id): #TODO: confirmation?
         messages.error(request,"You do not have privileges for this action.")
         return HttpResponseRedirect('/')
 
+# Change of password
 def changePassword(request, id):
     currentUserData = getCurrentUserDict(request)
     
@@ -227,3 +237,44 @@ def changePassword(request, id):
     else:
         context['form'] = ChangePasswordForm()
         return render(request, 'user/simpleForm.html', context)
+
+# View of all users with filtration
+def listUsers(request):
+    currentUserData = getCurrentUserDict(request)
+    if currentUserData == {}:
+        messages.error(request, "You need to log in to visit this page.")
+        return HttpResponseRedirect('/user/login/')
+
+    context = {
+        'title' : 'View users',
+        'currentUserData' : currentUserData
+    }
+
+
+    usersSet = User.objects
+    if request.method == 'GET':
+        form = UserFilterForm(request.GET)
+        if form.is_valid():
+            cln_data = form.cleaned_data
+            # Get filtering data from GET request and then apply filters to Queryset of users one-by-one
+            if cln_data['name']:
+                usersSet = usersSet.filter(name__icontains = cln_data['name'])
+
+            if cln_data['surname']:
+                usersSet = usersSet.filter(surname__icontains = cln_data['surname'])
+
+            if cln_data['role'] and cln_data['role'] != 'any':
+                usersSet = usersSet.filter(role = cln_data['role'])
+
+            asc_char = ''
+            if cln_data['order'] == 'descending':
+                asc_char = '-'
+
+            if cln_data['order_by']:
+                usersSet = usersSet.order_by(asc_char + cln_data['order_by'])
+
+
+    users = usersSet.all()
+    context['users'] = users
+    context['filter_form'] = form
+    return render(request,'user/usersList.html', context)

@@ -1,3 +1,7 @@
+# urls.py
+# Author: Leopold Nemcek, Rudolf Hyksa
+# Description: This file links specific url paths to view functions
+
 from django.urls import path
 from .views import rootpage_view, user_views, tickets_views, requests_views
 from django.conf import settings
@@ -11,6 +15,7 @@ userUrls = [
     path('user/edit/<int:id>/', user_views.editProfile, name='user-edit'),
     path('user/delete/<int:id>/', user_views.deleteAccount, name='user-delete'),
     path('user/edit/password/<int:id>/', user_views.changePassword, name='user-change-password'),
+    path('user/list/', user_views.listUsers, name='List users')
 ]
 
 ticketsUrls = [

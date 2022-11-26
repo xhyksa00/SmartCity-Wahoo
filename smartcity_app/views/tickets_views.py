@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
-from ..models import Ticket, User, ServiceRequest, Image
-from .helpers import getCurrentUserDict, getLoggedUserObject
+from ..models import Ticket, User, ServiceRequest, Image, TicketComments
+from .helpers import getCurrentUserDict, getLoggedUserObject, CommentFull
 from django.contrib import messages
-from ..forms.ticket_forms import CreateTicketForm, UploadImageForm
+from ..forms.ticket_forms import CreateTicketForm, UploadImageForm, CommentForm
 from django.core.files.storage import FileSystemStorage
 
 def list_tickets(request: HttpRequest) -> HttpResponse:
@@ -30,6 +30,30 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
     serviceRequest = ServiceRequest.objects.filter(ticketid = id).all().first()
     images = Image.objects.filter(ticketid=ticket.id).all()
 
+    if request.method == 'POST':
+        if 'text' in request.POST:
+            commentForm = CommentForm(request.POST)
+            comment = commentForm.save(commit=False)
+            comment.ticketid_id = id
+            comment.authorid_id = currentUserData['id']
+            comment.save()
+            messages.success(request,'Comment added.')
+
+
+    comments = TicketComments.objects.filter( ticketid_id = id).all()
+    fullComments = []
+    for comment in comments:
+        fullComment = CommentFull()
+        fullComment.text = comment.text
+        fullComment.timestamp = comment.created_timestamp
+        author = User.objects.filter(id = comment.authorid_id).all()
+        if author:
+            fullComment.AuthorName = author.first().name + ' ' + author.first().surname
+            fullComment.AuthorId = comment.authorid_id
+        else:
+            fullComment.AuthorName = '[Deleted user]'
+        fullComments.append(fullComment)
+    
     owner = (ticket.authorid_id == currentUserData['id'])
     context = {
         'ticket': ticket,
@@ -38,6 +62,9 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
         'images': images,
         'owner': owner
     }
+
+    context['comments'] = fullComments
+    context['comment_form'] = CommentForm()
 
     return render(request, 'tickets/details.html', context)
 

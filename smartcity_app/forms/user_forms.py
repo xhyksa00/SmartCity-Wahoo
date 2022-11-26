@@ -67,4 +67,31 @@ class ChangePasswordForm(forms.Form):
         super(ChangePasswordForm, self).__init__(*args, **kwargs)
         for fieldName in self.Meta.fields:
             self.fields[fieldName].widget.attrs['class'] = 'form-control'
-        
+
+
+class UserFilterForm(forms.Form):
+
+    class Meta:
+        fields = ['name', 'surname', 'role', 'order_by', 'order']
+        select_fields = ['role', 'order_by', 'order']
+        role_choices = [('any', 'Any'), ('Citizen', 'Citizen'),
+                        ('Technician', 'Technician'), ('Officer', 'Officer')]
+        order_choices = [('name', 'Name'),
+                         ('surname', 'Surname'), ('role', 'Role')]
+        ascend_choices = [('ascending', 'Ascending'),
+                          ('descending', 'Descending')]
+
+    name = forms.CharField()
+    surname = forms.CharField()
+    role = forms.ChoiceField(choices=Meta.role_choices)
+    order_by = forms.ChoiceField(choices=Meta.order_choices)
+    order = forms.ChoiceField(choices=Meta.ascend_choices)
+
+    def __init__(self, *args, **kwargs):
+        super(UserFilterForm, self).__init__(*args, **kwargs)
+        for fieldName in self.Meta.fields:
+            self.fields[fieldName].required = False
+            if fieldName in self.Meta.select_fields:
+                self.fields[fieldName].widget.attrs['class'] = 'form-select'
+            else:
+                self.fields[fieldName].widget.attrs['class'] = 'form-control'

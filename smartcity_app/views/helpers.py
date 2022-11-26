@@ -1,3 +1,7 @@
+# helpers.py
+# Author: Leopold Nemcek, Rudolf Hyksa
+# Description: This file adds helper functions and classes for this app
+
 from ..models import User
 
 def getCurrentUserDict(request):
@@ -5,15 +9,17 @@ def getCurrentUserDict(request):
     if not isUserLogged(request):
         return {}
     
+    currentUser = getLoggedUserObject(request)
+
     return {
-        'role' : request.session['userRole'],
-        'name' : request.session['userName'],
-        'surname' : request.session['userSurname'],
+        'role' : currentUser.role,
+        'name' : currentUser.name,
+        'surname' : currentUser.surname,
         'id' : request.session['userId']
     }
 
 def isUserLogged(request):
-    if not 'userRole' in request.session or not 'userName' in request.session or not 'userSurname' in request.session or not 'userId' in request.session:
+    if  not 'userId' in request.session:
         request.session.flush()
         return False
 
@@ -21,3 +27,9 @@ def isUserLogged(request):
 
 def getLoggedUserObject(request):
     return User.objects.filter(id=request.session['userId']).first()
+
+class CommentFull:
+    text = ''
+    AuthorName = ''
+    AuthorId= ''
+    timestamp = ''

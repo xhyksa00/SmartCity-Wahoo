@@ -1,5 +1,5 @@
 from django import forms
-from ..models import Ticket, Image
+from ..models import Ticket, Image, TicketComments
 
 PRIORITY_CHOICES = [
     ('Lowest', 'Lowest'),
@@ -38,5 +38,16 @@ class UploadImageForm(forms.ModelForm):
             'url': forms.ClearableFileInput(attrs={
                 # 'class':'form-control',
                 'multiple': True
+            }),
+        }
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = TicketComments
+        fields = ['text']
+        widgets = {
+            'text' : forms.Textarea(attrs={
+                'class':'form-control',
+                'rows' : '3'
             }),
         }
