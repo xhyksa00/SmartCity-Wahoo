@@ -1,0 +1,45 @@
+{% extends "navbar_base.html" %}
+{% block content %}
+
+<h1>#{{ serviceRequest.id }}</h1>
+<br>
+<h2>
+    {% if request.state == 'Finished' %}
+    <span class="badge bg-success"> {{ request.state }} </span>
+    {% elif request.state == 'In Progress' %}
+    <span class="badge bg-warning"> {{ request.state }} </span>
+    {% elif request.state == 'Open' %}
+    <span class="badge bg-primary"> {{ request.state }} </span>
+    {% endif %}
+</h2>
+
+<div class="top-50 start-50">
+    Description: <br>
+    <p><strong>{{ serviceRequest.description }}</strong></p>
+    Date Created: {{ serviceRequest.created_timestamp }} <br>
+    Priority: {{ serviceRequest.priority }} <br>
+    Officer (Author):
+    <a href="{% url 'user-view' id=serviceRequest.authorid.id %}">
+        {{ serviceRequest.authorid.name }} {{ serviceRequest.authorid.surname }}
+    </a>
+    <br>
+    Assigned Technician:
+    {% if serviceRequest.technicianid %}
+    <a href="{% url 'user-view' id=serviceRequest.technicianid.id %}">
+        {{ serviceRequest.technicianid.name }} {{ serviceRequest.technicianid.surname }}
+    </a>
+    {% else %}
+    <i>No Technician assigned.</i>
+    {% endif %}
+    <br>
+    Relevant Ticket:
+    <a href="{% url 'ticket-details' id=serviceRequest.ticketid.id %}">
+        {{ serviceRequest.ticketid.title }}
+    </a>
+    <br>
+    <!-- TODO: -->
+    Expected Completion Date: ...
+    Estimated Expenses: ...
+</div>
+
+{% endblock content %}

@@ -29,6 +29,7 @@ requestsUrls = [
     path('requests/list/', requests_views.list_requests, name='list-requests'),
     path('requests/list/<int:id>/', requests_views.show_request, name='request-details'),
     path('requests/create/', requests_views.create_request, name='create-request'),
+    path('requests/create/<int:ticket_id>/', requests_views.create_request, name='create-request-to-ticket'),
     path('requests/edit/<int:id>/', requests_views.edit_request, name='edit-request'),
 ]
 

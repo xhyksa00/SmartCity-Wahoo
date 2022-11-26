@@ -70,8 +70,9 @@
               </a>
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="#">All</a></li>
+                {% if currentUserData.role == 'Technician' %}
                 <li><a class="dropdown-item" href="#">Assigned to me</a></li>
-                {% if currentUserData.role == "Officer" %}
+                {% elif currentUserData.role == "Officer" %}
                 <li><a class="dropdown-item" href="#">Created by me</a></li>
                 {% endif %}
               </ul>
