@@ -17,20 +17,27 @@
     {% endif %}
 </h2>
 <div class="top-50 start-50">
-    <!-- Title : <strong>{{ ticket.title }}</strong> <br> -->
     Description: <br>
     <p><strong>{{ ticket.description }}</strong></p>
-    <!-- Status: {{ ticket.state }} <br> -->
     Date Created: {{ ticket.created_timestamp }} <br>
     Priority: {{ ticket.priority }} <br>
-    Author: {{ ticket.authorid.name }} {{ ticket.authorid.surname }}<br>
+    Author: {{ ticket.authorid.name }} {{ ticket.authorid.surname }} <br>
     {% if currentUserData.role in 'Officer,Technician' %}
-    Assigned Service Request: {{ serviceRequest.id }}<br>
+    Assigned Service Request: 
+        {% if serviceRequest %} 
+            <a href="{% url 'request-details' id=serviceRequest.id %}"><i>#{{ serviceRequest.id }}</i></a><br>
+        {% else %}
+            {% if currentUserData.role == 'Officer' %}
+                <a href="{% url 'create-request-to-ticket' ticket_id=ticket.id %}"><i>Click here to assign.</i></a><br>
+            {% else %}
+                <i>No reqeust assigned.</i><br>
+            {% endif %}
+        {% endif %}
     {% endif %}
 
     {% if owner %}
     <div class="mt-3">
-        <a href="{% url 'edit-ticket' id=ticket.id%}"><button type="button" class="btn btn-primary me-2">Edit
+        <a href="{% url 'edit-ticket' ticket_id=ticket.id %}"><button type="button" class="btn btn-primary me-2">Edit
                 Ticket</button></a>
         <!-- <button type="button" class="btn btn-danger">Delete Ticket</button> -->
     </div>
@@ -49,8 +56,6 @@
                 data-bs-parent="#accordionFlushExample">
                 <div class="accordion-body">
                     <div class="container">
-                        <!-- <h1 class="fw-light text-center text-lg-start mt-4 mb-0">Pictures</h1>
-                        <hr class="mt-2 mb-5"> -->
                         <div class="row text-center text-lg-start">
                             {% for img in images %}
                             <div class="col-lg-3 col-md-4 col-6">
@@ -106,23 +111,9 @@
             </div>
         </div>
     </div>
-
-    <!-- <div class="container">
-        <h1 class="fw-light text-center text-lg-start mt-4 mb-0">Pictures</h1>
-        <hr class="mt-2 mb-5">
-        <div class="row text-center text-lg-start">
-            {% for img in images %}
-            <div class="col-lg-3 col-md-4 col-6">
-                <a href="{{ img.url.url }}" class="d-block mb-4 h-100">
-                    <img class="img-fluid img-thumbnail" src="{{ img.url.url }}" alt="">
-                </a>
-            </div>
-            {% endfor %}
-        </div>
-    </div> -->
 </div>
 
-
+<!-- what is this </div>? -->
 </div>
 
 {% endblock content %}
