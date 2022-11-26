@@ -27,7 +27,7 @@ def login(request):
         
             #If login info was found and password checks out with the hashed password from DB
             if ( loginData and checkpw(pwd.encode('utf8'), loginData.first().password.encode('utf8')) ):
-                request.session['userId'] = loginData.userid_id
+                request.session['userId'] = loginData.first().userid_id
                 request.session.set_expiry(0)
 
                 messages.success(request, 'Login succesfull.')
