@@ -22,7 +22,11 @@
     <p><strong>{{ ticket.description }}</strong></p>
     <!-- Status: {{ ticket.state }} <br> -->
     Date Created: {{ ticket.created_timestamp }} <br>
-    Priority: {{ ticket.priority }} <br>
+    <!-- Priority: {{ ticket.priority }} <br> -->
+    <form action="." method="POST">
+        {% csrf_token %}
+        {{ priority_form}}
+    </form>
     Author: {{ ticket.authorid.name }} {{ ticket.authorid.surname }}<br>
     {% if currentUserData.role in 'Officer,Technician' %}
     Assigned Service Request: {{ serviceRequest.id }}<br>

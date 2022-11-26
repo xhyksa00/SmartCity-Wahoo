@@ -51,3 +51,15 @@ class CommentForm(forms.ModelForm):
                 'rows' : '3'
             }),
         }
+
+class PriorityForm(forms.Form):
+    class Meta:
+        fields = ['priority']
+        choices = [('Lowest','Lowest'),('Low','Low'),('Medium','Medium'),('High','High'),('Highest','Highest')]
+
+    priority = forms.ChoiceField(choices=Meta.choices)
+
+    def __init__(self, *args, **kwargs):
+        super(PriorityForm, self).__init__(*args, **kwargs)
+        for fieldName in self.Meta.fields:
+            self.fields[fieldName].widget.attrs['onchange'] =  'this.form.submit()'
