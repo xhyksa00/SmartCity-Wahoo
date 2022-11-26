@@ -18,23 +18,67 @@
 </h2>
 <div class="top-50 start-50">
     <!-- Title : <strong>{{ ticket.title }}</strong> <br> -->
-    Description: <br><p><strong>{{ ticket.description }}</strong></p>
+    Description: <br>
+    <p><strong>{{ ticket.description }}</strong></p>
     <!-- Status: {{ ticket.state }} <br> -->
     Date Created: {{ ticket.created_timestamp }} <br>
     Priority: {{ ticket.priority }} <br>
     Author: {{ ticket.authorid.name }} {{ ticket.authorid.surname }}<br>
     {% if currentUserData.role in 'Officer,Technician' %}
     Assigned Service Request: {{ serviceRequest.id }}<br>
-    {% endif %} <br>
+    {% endif %}
 
     {% if owner %}
     <div class="mt-3">
-        <a href="{% url 'edit-ticket' id=ticket.id%}"><button type="button" class="btn btn-primary me-2">Edit Ticket</button></a>
+        <a href="{% url 'edit-ticket' id=ticket.id%}"><button type="button" class="btn btn-primary me-2">Edit
+                Ticket</button></a>
         <!-- <button type="button" class="btn btn-danger">Delete Ticket</button> -->
     </div>
+    <br>
     {% endif %}
     <!-- Page Content -->
-    <div class="container">
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                    Pictures
+                </button>
+            </h2>
+            <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
+                data-bs-parent="#accordionFlushExample">
+                <div class="accordion-body">
+                    <div class="container">
+                        <!-- <h1 class="fw-light text-center text-lg-start mt-4 mb-0">Pictures</h1>
+                        <hr class="mt-2 mb-5"> -->
+                        <div class="row text-center text-lg-start">
+                            {% for img in images %}
+                            <div class="col-lg-3 col-md-4 col-6">
+                                <a href="{{ img.url.url }}" class="d-block mb-4 h-100">
+                                    <img class="img-fluid img-thumbnail" src="{{ img.url.url }}" alt="">
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                    Comments
+                </button>
+            </h2>
+            <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo"
+                data-bs-parent="#accordionFlushExample">
+                <div class="accordion-body">Lorem ipsum dolor sit amet</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="container">
         <h1 class="fw-light text-center text-lg-start mt-4 mb-0">Pictures</h1>
         <hr class="mt-2 mb-5">
         <div class="row text-center text-lg-start">
@@ -46,8 +90,7 @@
             </div>
             {% endfor %}
         </div>
-
-    </div>
+    </div> -->
 </div>
 
 
