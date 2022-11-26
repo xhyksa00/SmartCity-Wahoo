@@ -1,3 +1,7 @@
+# forms.py
+# Author: Leopold Nemcek
+# Description: Forms for the admin app
+
 from django import forms
 
 

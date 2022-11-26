@@ -1,3 +1,6 @@
+# helpers.py
+# Author: Leopold Nemcek
+# Description: Helper functions for the admin app
 
 
 def isLoggedIn(request):

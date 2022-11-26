@@ -1,7 +1,12 @@
+# models.py
+# Authors: Leopold Nemcek, Rudolf Hyksa
+# Description:  File defining DB models used by the admin app
+#               Classes describe tables in our database
+
 from django.db import models
 
-# Create your models here.
 
+# Admin login info table
 class AdminInfo(models.Model):
     username = models.CharField(primary_key=True, max_length=5)
     password = models.CharField(max_length=60)
@@ -10,7 +15,7 @@ class AdminInfo(models.Model):
         managed = False
         db_table = 'admin_info'
 
-
+# User table
 class User(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
