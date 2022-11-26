@@ -1,6 +1,6 @@
 # helpers.py
 # Author: Leopold Nemcek, Rudolf Hyksa
-# Description: This file adds helper functions for this app
+# Description: This file adds helper functions and classes for this app
 
 from ..models import User
 
@@ -27,3 +27,9 @@ def isUserLogged(request):
 
 def getLoggedUserObject(request):
     return User.objects.filter(id=request.session['userId']).first()
+
+class CommentFull:
+    text = ''
+    AuthorName = ''
+    AuthorId= ''
+    timestamp = ''
