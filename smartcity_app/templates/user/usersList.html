@@ -1,4 +1,4 @@
-{% extends "admin_base.html" %} {% block content %}
+{% extends "navbar_base.html" %} {% block content %}
 
 <style>
   .table-row {
@@ -30,10 +30,6 @@
             {{ filter_form.role }}
           </div>
           <div class="fieldWrapper col-3">
-            <label for="{{ filter_form.id.id_for_label }}">Id:</label>
-            {{ filter_form.id }}
-          </div>
-          <div class="fieldWrapper col-3">
             <label for="{{ filter_form.order_by.id_for_label }}">Order by:</label>
             {{ filter_form.order_by }}
           </div>
@@ -42,13 +38,13 @@
             {{ filter_form.order }}
           </div>
           
-          
+          <br>
           <div class="col-3  mt-2">
               <button type="submit" class="btn btn-primary me-3">Search</button>
           </div>
       </form>
       <div class="col-3  mt-2">
-        <a href="/admin/user/list/"> <button  class="btn btn-outline-primary me-3">Reset filters</button></a>
+        <a href="/user/list/"> <button  class="btn btn-outline-primary me-3">Reset filters</button></a>
     </div>
       </div>
     </div>
@@ -64,25 +60,23 @@
         <th scope="col">Name</th>
         <th scope="col">Surname</th>
         <th scope="col">Role</th>
-        <th scope="col">ID</th>
       </tr>
     </thead>
     <tbody class="bg-body">
       {% for user in users %}
       <tr
         class="table-row"
-        onclick="window.location='/admin/user/{{user.id}}/'"
+        onclick="window.location='/user/{{user.id}}/'"
       >
         <td>{{user.name}}</td>
         <td>{{user.surname}}</td>
         <td>{{user.role}}</td>
-        <td>{{user.id}}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
   {% else %}
-  <div class="text-center  mt-3">
+  <div class="text-center mt-3">
     <strong>No results found</strong>
   </div>
   {% endif %}

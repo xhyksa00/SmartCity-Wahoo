@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect,HttpResponseBadRequest
-from ..forms.user_forms import LoginForm, RegisterForm, OfficerRoleForm, EditAccountForm, ChangePasswordForm
+from ..forms.user_forms import LoginForm, RegisterForm, OfficerRoleForm, EditAccountForm, ChangePasswordForm, UserFilterForm
 from bcrypt import hashpw,gensalt,checkpw
 from ..models import LoginInfo, User
 from django.contrib import messages
@@ -221,3 +221,43 @@ def changePassword(request, id):
     else:
         context['form'] = ChangePasswordForm()
         return render(request, 'user/simpleForm.html', context)
+
+def listUsers(request):
+    currentUserData = getCurrentUserDict(request)
+    if currentUserData == {}:
+        messages.error(request, "You need to log in to visit this page.")
+        return HttpResponseRedirect('/user/login/')
+
+    context = {
+        'title' : 'View users',
+        'currentUserData' : currentUserData
+    }
+
+
+    usersSet = User.objects
+    if request.method == 'GET':
+        form = UserFilterForm(request.GET)
+        if form.is_valid():
+            cln_data = form.cleaned_data
+
+            if cln_data['name']:
+                usersSet = usersSet.filter(name__icontains = cln_data['name'])
+
+            if cln_data['surname']:
+                usersSet = usersSet.filter(surname__icontains = cln_data['surname'])
+
+            if cln_data['role'] and cln_data['role'] != 'any':
+                usersSet = usersSet.filter(role = cln_data['role'])
+
+            asc_char = ''
+            if cln_data['order'] == 'descending':
+                asc_char = '-'
+
+            if cln_data['order_by']:
+                usersSet = usersSet.order_by(asc_char + cln_data['order_by'])
+
+
+    users = usersSet.all()
+    context['users'] = users
+    context['filter_form'] = form
+    return render(request,'user/usersList.html', context)
