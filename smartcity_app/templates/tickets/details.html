@@ -20,17 +20,8 @@
     Description: <br>
     <p><strong>{{ ticket.description }}</strong></p>
     Date Created: {{ ticket.created_timestamp }} <br>
-<<<<<<< HEAD
-    <!-- Priority: {{ ticket.priority }} <br> -->
-    <form action="." method="POST">
-        {% csrf_token %}
-        {{ priority_form}}
-    </form>
-    Author: {{ ticket.authorid.name }} {{ ticket.authorid.surname }}<br>
-=======
     Priority: {{ ticket.priority }} <br>
     Author: {{ ticket.authorid.name }} {{ ticket.authorid.surname }} <br>
->>>>>>> ed1c663109b461c9ecc41cfd21552abff7f72270
     {% if currentUserData.role in 'Officer,Technician' %}
     Assigned Service Request: 
         {% if serviceRequest %} 

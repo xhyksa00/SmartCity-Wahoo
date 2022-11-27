@@ -22,7 +22,7 @@ ticketsUrls = [
     path('tickets/list/', tickets_views.list_tickets, name='list-tickets'),
     path('tickets/list/<int:id>/', tickets_views.show_ticket, name='ticket-details'),
     path('tickets/create/', tickets_views.create_ticket, name='create-ticket'),
-    path('tickets/edit/<int:id>/', tickets_views.edit_ticket, name='edit-ticket'),
+    path('tickets/edit/<int:ticket_id>/', tickets_views.edit_ticket, name='edit-ticket'),
 ]
 
 requestsUrls = [

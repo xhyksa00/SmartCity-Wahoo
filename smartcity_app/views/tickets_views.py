@@ -72,6 +72,7 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
     }
 
     context['comments'] = fullComments
+    context['commentsCount'] = len(fullComments)
     context['comment_form'] = CommentForm()
     context['priority_form'] = priorityForm
 

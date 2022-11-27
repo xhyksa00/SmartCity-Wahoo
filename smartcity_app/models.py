@@ -167,7 +167,6 @@ class ServiceRequestComments(models.Model):
     id = models.AutoField(primary_key=True)
     text = models.CharField(max_length=255, blank=True, null=True)
     created_timestamp = models.DateTimeField(blank=True, null=True, auto_now_add=True)
-    ticketid = models.ForeignKey('Ticket', models.DO_NOTHING, db_column='ticketId', blank=True, null=True)  # Field name made lowercase.
     authorid = models.ForeignKey('User', models.DO_NOTHING, db_column='authorId', blank=True, null=True)  # Field name made lowercase.
     requestid = models.ForeignKey(ServiceRequest, models.DO_NOTHING, db_column='requestId', blank=True, null=True)  # Field name made lowercase.
 

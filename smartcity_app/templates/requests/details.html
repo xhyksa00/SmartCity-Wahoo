@@ -48,4 +48,42 @@
     Estimated Expenses: ...
 </div>
 
+
+<h2>
+    Comments
+</h2>
+
+
+<form action="." method="POST">
+    {% csrf_token %}
+    <div class="mb-1">
+        New comment:
+    </div>
+    {{ comment_form.text }}
+    <div class="pe-2 col text-end">
+        <button type="submit" class="btn btn-outline-primary mt-2">Submit</button>
+    </div>
+</form>
+
+
+{% for comment in comments %}
+<p>
+    <div class="bg-secondary m-3 px-1 pb-2 row rounded" style="--bs-bg-opacity: .3">
+        <div class="col-md-6 text-start ">
+                <a href="/user/{{comment.AuthorId}}/">
+                <p class="fs-6">{{ comment.AuthorName}}</p>
+            </a>
+            </div>
+        <div class="col-md-6 text-end fs-6">
+            {{ comment.timestamp }}
+        </div>
+        <div class="col-md-6 text-start fs-5">
+            {{comment.text}}
+        </div>
+    </div>
+</p>
+{% endfor %}
+
+
+
 {% endblock content %}
