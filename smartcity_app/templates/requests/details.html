@@ -1,19 +1,19 @@
 {% extends "navbar_base.html" %}
 {% block content %}
 
-<h1>#{{ serviceRequest.id }}</h1>
-<br>
+<h1>Request ID - #{{ serviceRequest.id }}</h1>
 <h2>
-    {% if request.state == 'Finished' %}
-    <span class="badge bg-success"> {{ request.state }} </span>
-    {% elif request.state == 'In Progress' %}
-    <span class="badge bg-warning"> {{ request.state }} </span>
-    {% elif request.state == 'Open' %}
-    <span class="badge bg-primary"> {{ request.state }} </span>
+    {% if serviceRequest.state == 'Finished' %}
+    <span class="badge bg-success"> {{ serviceRequest.state }} </span>
+    {% elif serviceRequest.state == 'In Progress' %}
+    <span class="badge bg-warning"> {{ serviceRequest.state }} </span>
+    {% elif serviceRequest.state == 'Open' %}
+    <span class="badge bg-primary"> {{ serviceRequest.state }} </span>
     {% endif %}
 </h2>
 
 <div class="top-50 start-50">
+    Relevant Ticket: <a href="{% url 'ticket-details' id=serviceRequest.ticketid.id %}"> {{ serviceRequest.ticketid.title }} </a> <br>
     Description: <br>
     <p><strong>{{ serviceRequest.description }}</strong></p>
     Date Created: {{ serviceRequest.created_timestamp }} <br>
@@ -44,7 +44,7 @@
     </a>
     <br>
     <!-- TODO: -->
-    Expected Completion Date: ...
+    Expected Completion Date: ... <br>
     Estimated Expenses: ...
 </div>
 
