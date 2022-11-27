@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from ..models import Ticket, User, ServiceRequest, Image, TicketComments
 from .helpers import getCurrentUserDict, getLoggedUserObject, CommentFull
 from django.contrib import messages
-from ..forms.ticket_forms import CreateTicketForm, UploadImageForm, CommentForm
+from ..forms.ticket_forms import CreateTicketForm, UploadImageForm, CommentForm, PriorityForm
 from django.core.files.storage import FileSystemStorage
 
 def list_tickets(request: HttpRequest) -> HttpResponse:
@@ -38,8 +38,16 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
             comment.authorid_id = currentUserData['id']
             comment.save()
             messages.success(request,'Comment added.')
+        if 'priority' in request.POST:
+            priorityFormPOST = PriorityForm(request.POST)
+            if priorityFormPOST.is_valid():
+                ticket.priority = priorityFormPOST.cleaned_data['priority']
+                ticket.save()
 
+    
 
+    priorityForm = PriorityForm()
+    priorityForm.fields['priority'].initial = ticket.priority
     comments = TicketComments.objects.filter( ticketid_id = id).all()
     fullComments = []
     for comment in comments:
@@ -64,7 +72,9 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
     }
 
     context['comments'] = fullComments
+    context['commentsCount'] = len(fullComments)
     context['comment_form'] = CommentForm()
+    context['priority_form'] = priorityForm
 
     return render(request, 'tickets/details.html', context)
 

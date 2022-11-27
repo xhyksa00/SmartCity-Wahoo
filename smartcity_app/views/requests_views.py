@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
-from ..models import Ticket, User, ServiceRequest
-from .helpers import getCurrentUserDict, getLoggedUserObject
+from ..models import Ticket, User, ServiceRequest, ServiceRequestComments
+from .helpers import getCurrentUserDict, getLoggedUserObject, CommentFull
 from django.contrib import messages
-from ..forms.request_forms import CreateRequestForm, AssignTechnicianForm
+from ..forms.request_forms import CreateRequestForm, AssignTechnicianForm, ServiceRCommentForm
 from django.core.files.storage import FileSystemStorage
 
 # NOTE: DONE!
@@ -42,12 +42,21 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
     if currentUserData['role'] == 'Officer':
         # technician = serviceRequest.technicianid
         if request.method == 'POST':
-            assign_form = AssignTechnicianForm(request.POST)
-            if assign_form.is_valid():
-                serviceRequest.technicianid = assign_form.cleaned_data['technicianid']
-                serviceRequest.save()
+            if 'technicianid' in request.POST:
+                assign_form = AssignTechnicianForm(request.POST)
+                if assign_form.is_valid():
+                    serviceRequest.technicianid = assign_form.cleaned_data['technicianid']
+                    serviceRequest.save()
 
-                return HttpResponseRedirect(f'/requests/list/{id}/')
+                    return HttpResponseRedirect(f'/requests/list/{id}/')
+            else:
+                commentForm = ServiceRCommentForm(request.POST)
+                comment = commentForm.save(commit=False)
+                comment.requestid_id = id
+                comment.authorid_id = currentUserData['id']
+                comment.save()
+                messages.success(request,'Comment added.')
+                assign_form = AssignTechnicianForm(instance=serviceRequest)
         else:
             assign_form = AssignTechnicianForm(instance=serviceRequest)
             # if serviceRequest.technicianid:
@@ -56,11 +65,28 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
             #     assign_form.fields['technicianid'].initial = 'none'
 
     owner = (serviceRequest.authorid_id == currentUserData['id'])
+    comments = ServiceRequestComments.objects.filter(requestid_id = id).all()
+    fullComments = []
+    for comment in comments:
+        fullComment = CommentFull()
+        fullComment.text = comment.text
+        fullComment.timestamp = comment.created_timestamp
+        author = User.objects.filter(id = comment.authorid_id).all()
+        if author:
+            fullComment.AuthorName = author.first().name + ' ' + author.first().surname
+            fullComment.AuthorId = comment.authorid_id
+        else:
+            fullComment.AuthorName = '[Deleted user]'
+        fullComments.append(fullComment)
+
     context = {
         'serviceRequest': serviceRequest,
         'currentUserData': currentUserData,
         'assign_form': assign_form,
-        'owner': owner
+        'owner': owner,
+        'comments' : fullComments,
+        'commentsCount' : len(fullComments),
+        'comment_form' : ServiceRCommentForm()
     }
 
     return render(request, 'requests/details.html', context)
