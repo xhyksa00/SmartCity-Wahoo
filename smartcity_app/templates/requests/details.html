@@ -38,19 +38,14 @@
         {% endif %}
         <br>
     {% endif %}
-    Relevant Ticket:
-    <a href="{% url 'ticket-details' id=serviceRequest.ticketid.id %}">
-        {{ serviceRequest.ticketid.title }}
-    </a>
-    <br>
     <!-- TODO: -->
     Expected Completion Date: ... <br>
-    Estimated Expenses: ...
+    Estimated Expenses: ... <br>
 </div>
 
 
 <h2>
-    Comments
+    Comments &nbsp;<span class="badge bg-secondary">{{ commentsCount }}</span>
 </h2>
 
 
@@ -70,7 +65,7 @@
 <p>
     <div class="bg-secondary m-3 px-1 pb-2 row rounded" style="--bs-bg-opacity: .3">
         <div class="col-md-6 text-start ">
-                <a href="/user/{{comment.AuthorId}}/">
+                <a href="{% url 'user-view' id=comment.AuthorId %}">
                 <p class="fs-6">{{ comment.AuthorName}}</p>
             </a>
             </div>

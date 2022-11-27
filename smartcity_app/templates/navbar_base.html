@@ -79,13 +79,13 @@
             </li>
             {% endif %} 
             <li class="nav-item">
-              <a class="nav-link" href="/user/list/">Users</a>
+              <a class="nav-link" href="{% url 'user-list' %}">Users</a>
             </li>
           </ul>
 
           <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link" href="/user/{{currentUserData.id}}/">
+              <a class="nav-link" href="{% url 'user-view' id=currentUserData.id %}">
                 {{currentUserData.name}} {{currentUserData.surname}}
               </a>
             </li>
@@ -95,7 +95,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-danger" href="/user/logout/">
+              <a class="nav-link text-danger" href="{% url 'user-logout' %}">
                   Logout
               </a>
             </li>

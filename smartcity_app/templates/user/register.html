@@ -6,7 +6,7 @@
 
 
 <div class="position-absolute top-50 start-50 translate-middle rounded color-block bg-info bg-gradient">
-    <a href="/user/login" class="m-2"> &lt;Back to login</a>
+    <a href="{% url 'user-login' %}" class="m-2"> &lt;Back to login</a>
     <div class="m-4">
         <form action="." method="POST">
             {% csrf_token %}

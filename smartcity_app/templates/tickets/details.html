@@ -73,7 +73,7 @@
             <h2 class="accordion-header" id="flush-headingTwo">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                     data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                    Comments
+                    Comments &nbsp;<span class="badge bg-secondary"> {{ commentsCount }}</span>
                 </button>
             </h2>
             <div id="flush-collapseTwo" class="accordion-collapse collapse pb-1 show" aria-labelledby="flush-headingTwo"
@@ -95,8 +95,8 @@
                 <p>
                     <div class="bg-secondary m-3 px-1 pb-2 row rounded" style="--bs-bg-opacity: .3">
                         <div class="col-md-6 text-start ">
-                                <a href="/user/{{comment.AuthorId}}/">
-                                <p class="fs-6">{{ comment.AuthorName}}</p>
+                                <a href="{% url 'user-view' id=comment.AuthorId %}">
+                                <p class="fs-6">{{ comment.AuthorName }}</p>
                             </a>
                             </div>
                         <div class="col-md-6 text-end fs-6">
