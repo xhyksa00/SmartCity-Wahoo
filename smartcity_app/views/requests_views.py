@@ -20,6 +20,7 @@ def list_requests(request: HttpRequest) -> HttpResponse:
 
     requests = ServiceRequest.objects.all()
     context = {
+        'title': 'Request List',
         'requests': requests,
         'currentUserData': currentUserData,
     }
@@ -80,6 +81,7 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
         fullComments.append(fullComment)
 
     context = {
+        'title': 'Request Details',
         'serviceRequest': serviceRequest,
         'currentUserData': currentUserData,
         'assign_form': assign_form,

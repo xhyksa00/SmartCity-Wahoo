@@ -14,6 +14,7 @@ def list_tickets(request: HttpRequest) -> HttpResponse:
 
     tickets = Ticket.objects.all()
     context = {
+        'title': 'Ticket List',
         'tickets': tickets,
         'currentUserData': currentUserData,
     }
@@ -64,6 +65,7 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
     
     owner = (ticket.authorid_id == currentUserData['id'])
     context = {
+        'title': 'Ticket Details',
         'ticket': ticket,
         'serviceRequest': serviceRequest,
         'currentUserData': currentUserData,
@@ -112,6 +114,7 @@ def create_ticket(request: HttpRequest) -> HttpResponse:
         image_form = UploadImageForm()
     
     context = {
+        'title': 'Create Ticket',
         'ticket_form': ticket_form,
         'image_form': image_form,
         'currentUserData': currentUserData
@@ -140,6 +143,7 @@ def edit_ticket(request: HttpRequest, id:int) -> HttpResponse:
         ticket_form = CreateTicketForm(instance=ticket)
 
     context = {
+        'title': 'Edit Ticket',
         'ticket_form': ticket_form,
         'currentUserData': currentUserData
     }
