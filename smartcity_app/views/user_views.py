@@ -127,7 +127,7 @@ def viewUser(request, id):
     if(id == currentUserData['id']):
         context['owner']  = True
 
-    if(currentUserData['role'] == 'officer'):
+    if(currentUserData['role'] == 'Officer'):
         form = OfficerRoleForm()
         form.fields['role'].initial = requestedUserData['role']
         context['form'] = form 

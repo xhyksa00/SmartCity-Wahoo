@@ -23,15 +23,21 @@
         {{ serviceRequest.authorid.name }} {{ serviceRequest.authorid.surname }}
     </a>
     <br>
-    Assigned Technician:
-    {% if serviceRequest.technicianid %}
-    <a href="{% url 'user-view' id=serviceRequest.technicianid.id %}">
-        {{ serviceRequest.technicianid.name }} {{ serviceRequest.technicianid.surname }}
-    </a>
+    {% if currentUserData.role == 'Officer' %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        Assigned Technician: {{ assign_form.technicianid }}
+    </form>
     {% else %}
-    <i>No Technician assigned.</i>
+        {% if serviceRequest.technicianid %}
+        Assigned Technician: <a href="{% url 'user-view' id=serviceRequest.technicianid.id %}">
+            {{ serviceRequest.technicianid.name }} {{ serviceRequest.technicianid.surname }}
+        </a>
+        {% else %}
+        Assigned Technician: <i>No Technician assigned.</i>
+        {% endif %}
+        <br>
     {% endif %}
-    <br>
     Relevant Ticket:
     <a href="{% url 'ticket-details' id=serviceRequest.ticketid.id %}">
         {{ serviceRequest.ticketid.title }}
