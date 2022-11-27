@@ -33,7 +33,7 @@
               Tickets
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'list-tickets' %}">All</a></li>
+              <li><a class="dropdown-item" href="{% url 'ticket-list' %}">All</a></li>
               <li><a class="dropdown-item" href="#">Created by me</a></li>
             </ul>
           </li>
@@ -43,7 +43,7 @@
               Service requests
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'list-requests' %}">All</a></li>
+              <li><a class="dropdown-item" href="{% url 'request-list' %}">All</a></li>
               {% if currentUserData.role == 'Technician' %}
               <li><a class="dropdown-item" href="#">Assigned to me</a></li>
               {% elif currentUserData.role == "Officer" %}
@@ -64,7 +64,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-primary" href="{% url 'create-ticket' %}">
+            <a class="nav-link text-primary" href="{% url 'ticket-create' %}">
               New ticket
             </a>
           </li>

@@ -28,7 +28,7 @@
             <a href="{% url 'request-details' id=serviceRequest.id %}"><i>#{{ serviceRequest.id }}</i></a><br>
         {% else %}
             {% if currentUserData.role == 'Officer' %}
-                <a href="{% url 'create-request-to-ticket' ticket_id=ticket.id %}"><i>Click here to assign.</i></a><br>
+                <a href="{% url 'request-create-to-ticket' ticket_id=ticket.id %}"><i>Click here to assign.</i></a><br>
             {% else %}
                 <i>No reqeust assigned.</i><br>
             {% endif %}
@@ -37,7 +37,7 @@
 
     {% if owner %}
     <div class="mt-3">
-        <a href="{% url 'edit-ticket' ticket_id=ticket.id %}"><button type="button" class="btn btn-primary me-2">Edit
+        <a href="{% url 'ticket-edit' ticket_id=ticket.id %}"><button type="button" class="btn btn-primary me-2">Edit
                 Ticket</button></a>
         <!-- <button type="button" class="btn btn-danger">Delete Ticket</button> -->
     </div>
