@@ -49,6 +49,7 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
                     serviceRequest.technicianid = assign_form.cleaned_data['technicianid']
                     serviceRequest.save()
 
+                    messages.success(request,'Technician assigned.')
                     return HttpResponseRedirect(f'/requests/list/{id}/')
             else:
                 commentForm = ServiceRCommentForm(request.POST)
@@ -102,16 +103,19 @@ def create_request(request: HttpRequest, ticket_id: int = -1) -> HttpResponse:
 
     if request.method == 'POST':
         request_form = CreateRequestForm(request.POST)
-        serviceRequest = serviceRequest(
-            ticketid_id = request_form.cleaned_data['ticketid'],
-            technicianid_id = request_form.cleaned_data['technicianid'],
-            description = request_form.cleaned_data['description'],
-            priority = request_form.cleaned_data['priority'],
-            state = 'Open',
-            authorid_id = request.session['userId']
-        )
+        if request_form.is_valid():
+            serviceRequest = ServiceRequest(
+                ticketid = request_form.cleaned_data['ticketid'],
+                technicianid = request_form.cleaned_data['technicianid'],
+                description = request_form.cleaned_data['description'],
+                priority = request_form.cleaned_data['priority'],
+                state = 'Open',
+                authorid_id = request.session['userId']
+            )
 
-        serviceRequest.save()
+            serviceRequest.save()
+            messages.success(request,'Request created.')
+            return HttpResponseRedirect(f'/requests/list/{serviceRequest.id}')
 
     # Pick ticket to assign to
     else:
