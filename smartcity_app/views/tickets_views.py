@@ -23,15 +23,14 @@ def list_tickets(request: HttpRequest) -> HttpResponse:
                 ticketsSet = ticketsSet.filter( Q(title__contains=cln_data['search']) |
                                                 Q(description__contains=cln_data['search']))
 
-            if cln_data['priority']:
+            if cln_data['priority'] and cln_data['priority'] != 'any':
                 ticketsSet = ticketsSet.filter(priority=cln_data['priority'])
 
-            if cln_data['state']:
+            if cln_data['state'] and cln_data['state'] != 'any':
                 ticketsSet = ticketsSet.filter(state=cln_data['state'])
             
             ord_char = ''
-            if cln_data['order']:
-                ticketsSet = ticketsSet.filter(state=cln_data['state'])
+            if cln_data['order'] == 'dsc':
                 ord_char = '-'
 
             if cln_data['order_by']:

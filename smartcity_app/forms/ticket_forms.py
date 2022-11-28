@@ -83,6 +83,7 @@ class TicketFilterForm(forms.Form):
         ]
 
         state_choices = [
+            ('any', 'Any'),
             ('Open', 'Open'),
             ('Waiting', 'Waiting'),
             ('In Progress', 'In Progress'),
