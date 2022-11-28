@@ -60,12 +60,19 @@
         <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <a class="nav-link" href="{% url 'user-view' id=currentUserData.id %}">
-              {{currentUserData.name}} {{currentUserData.surname}}
+              {{currentUserData.name}} {{currentUserData.surname}} <small>({{currentUserData.role}})</small>
             </a>
           </li>
+          {% if currentUserData.role == 'Officer' %}
+          <li class="nav-item">
+            <a class="nav-link text-primary" href="{% url 'request-create' %}">
+              New Request
+            </a>
+          </li>
+          {% endif %}
           <li class="nav-item">
             <a class="nav-link text-primary" href="{% url 'ticket-create' %}">
-              New ticket
+              New Ticket
             </a>
           </li>
           <li class="nav-item">
