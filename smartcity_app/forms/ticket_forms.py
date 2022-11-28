@@ -95,47 +95,15 @@ class TicketFilterForm(forms.Form):
         order_by_choices = [
             ('title', 'Title'),
             ('priority', 'Priority'),
-            # ('date', 'Date'),
+            ('created_timestamp', 'Date'),
             ('state', 'State'),
         ]
 
-        # fields = ['priority', 'state', 'order', 'order_by']
-        # labels = {
-        #     'search': 'Search Title and Description',
-        #     'priority': 'Priority',
-        #     'state': 'Status',
-        #     'order': 'Order',
-        #     'order_by': 'Order by',
-        # }
-        # widgets = {
-        #     'search': forms.CharField(),
-        #     'priority': forms.ChoiceField(choices=priority_choices),
-        #     'state': forms.ChoiceField(choices=state_choices),
-        #     'order': forms.ChoiceField(choices=order_choices),
-        #     'order_by': forms.ChoiceField(choices=order_by_choices),
-        # }
     search = forms.CharField()
     priority = forms.ChoiceField(choices=Meta.priority_choices)
     state = forms.ChoiceField(choices=Meta.state_choices)
     order = forms.ChoiceField(choices=Meta.order_choices)
     order_by = forms.ChoiceField(choices=Meta.order_by_choices)
-        # widgets = {
-        #     'search': forms.TextInput(required=False, attrs={
-        #         'class': 'form-control',
-        #     }),
-        #     'priority': forms.ChoiceField(choices=priority_choices, required=False, attrs={
-        #         'class': 'form-select',
-        #     }),
-        #     'state': forms.ChoiceField(choices=state_choices, required=False, attrs={
-        #         'class': 'form-select',
-        #     }),
-        #     'order': forms.ChoiceField(choices=order_choices, required=False, attrs={
-        #         'class': 'form-select',
-        #     }),
-        #     'order_by': forms.ChoiceField(choices=order_by_choices, required=False, attrs={
-        #         'class': 'form-select',
-        #     }),
-        # }
 
     def __init__(self, *args, **kwargs):
         super(TicketFilterForm, self).__init__(*args, **kwargs)

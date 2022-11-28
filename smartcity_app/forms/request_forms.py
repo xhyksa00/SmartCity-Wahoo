@@ -115,7 +115,7 @@ class RequestFilterForm(forms.Form):
         order_by_choices = [
             ('ticketid__title', 'Relevant Ticket'),
             ('priority', 'Priority'),
-            # ('date', 'Date'),
+            ('created_timestamp', 'Date'),
             ('state', 'State'),
         ]
 
