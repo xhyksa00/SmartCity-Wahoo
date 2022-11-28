@@ -7,6 +7,7 @@
   }
 </style>
 
+<h1>Tickets</h1>
 <div class="accordion accordion-flush border" id="accordionFilter">
   <div class="accordion-item">
     <h2 class="accordion-header" id="headingOne">
@@ -59,6 +60,7 @@
   </div>
 </div>
 
+{% if tickets %}
 <table class="table rounded table-hover table-striped">
   <thead>
     <tr>
@@ -77,17 +79,7 @@
       <td>{{ticket.title}}</td>
       <td>{{ticket.created_timestamp}}</td>
       <td>
-      {%if ticket.priority == 'Lowest' %}
-        <span class="text-success">{{ ticket.priority }}</span>
-      {% elif ticket.priority == 'Low' %}
-        <span class="text-ifno">{{ ticket.priority }}</span>
-      {% elif ticket.priority == 'Medium' %}
-        <span class="text-primary">{{ ticket.priority }}</span>
-      {% elif ticket.priority == 'High' %}
-        <span class="text-warning">{{ ticket.priority }}</span>
-      {% else %}
-        <span class="text-danger">{{ ticket.priority }}</span>
-      {% endif %}
+        {{ ticket.priority }}
       </td>
       <!-- {% if currentUserData.role in 'Officer,Technician' %}
       <td>{{ticket.service_request}}</td>
@@ -109,6 +101,11 @@
     {% endfor %}
   </tbody>
 </table>
+{% else %}
+  <div class="text-center mt-3">
+    <strong>No results found</strong>
+  </div>
+  {% endif %}
 
 
 {% endblock content %}

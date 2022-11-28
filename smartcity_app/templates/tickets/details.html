@@ -17,9 +17,11 @@
     {% endif %}
 </h2>
 <div class="top-50 start-50">
-    Description: <br>
-    <p><strong>{{ ticket.description }}</strong></p>
-    Date Created: {{ ticket.created_timestamp }} <br>
+    Description:
+    <div class="bg-white px-2 m-1 pb-2 row rounded border"  >
+        <p>{{ ticket.description }}</p>
+    </div>
+    Date Created: <strong>{{ ticket.created_timestamp }}</strong> <br>
     {%if ticket.priority == 'Lowest' %}
         Priority: <strong class="text-success">{{ ticket.priority }}</strong> <br>
     {% elif ticket.priority == 'Low' %}
@@ -33,7 +35,12 @@
     {% endif %}
 
     
-    Author: <a href="{% url 'user-view' id=ticket.authorid_id %}">{{ ticket.authorid.name }} {{ ticket.authorid.surname }} </a><br>
+    Author: 
+    {% if ticket.authorid %}
+        <a href="{% url 'user-view' id=ticket.authorid_id %}">{{ ticket.authorid.name }} {{ ticket.authorid.surname }} </a><br>
+    {%else%}
+        <i>[Deleted]</i> <br>
+    {%endif%}
     {% if currentUserData.role in 'Officer,Technician' %}
     Assigned Service Request: 
         {% if serviceRequest %} 
