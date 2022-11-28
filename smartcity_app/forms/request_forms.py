@@ -40,10 +40,11 @@ class CreateRequestForm(forms.ModelForm):
         
         self.fields['ticketid'].widget.choices = ticket_choices
         self.fields['ticketid'].widget.attrs['class'] = 'form-select'
-        
 
         if ticket_id:
-            self.fields['ticketid'].initial = ticket_choices[ticket_id]
+            for choice in ticket_choices:
+                if choice[0] == ticket_id:
+                    self.fields['ticketid'].initial = choice
 
         tech_choices = [('', '-----------')]
         technicians = User.objects.filter(role='Technician').all()

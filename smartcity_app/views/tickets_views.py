@@ -3,8 +3,9 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from ..models import Ticket, User, ServiceRequest, Image, TicketComments
 from .helpers import getCurrentUserDict, getLoggedUserObject, CommentFull
 from django.contrib import messages
-from ..forms.ticket_forms import CreateTicketForm, UploadImageForm, CommentForm, PriorityForm
+from ..forms.ticket_forms import CreateTicketForm, UploadImageForm, CommentForm, PriorityForm, TicketFilterForm
 from django.core.files.storage import FileSystemStorage
+from django.db.models import Q
 
 def list_tickets(request: HttpRequest) -> HttpResponse:
     currentUserData = getCurrentUserDict(request)
@@ -12,10 +13,35 @@ def list_tickets(request: HttpRequest) -> HttpResponse:
         messages.warning(request, "You need to log in to visit this page.")
         return HttpResponseRedirect('/user/login/')
 
-    tickets = Ticket.objects.all()
+    ticketsSet = Ticket.objects
+    if request.method == 'GET':
+        filter_form = TicketFilterForm(request.GET)
+        if filter_form.is_valid():
+            cln_data = filter_form.cleaned_data
+            # Get filtering data from GET request and then apply filters to Queryset of tickets one-by-one
+            if cln_data['search']:
+                ticketsSet = ticketsSet.filter( Q(title__contains=cln_data['search']) |
+                                                Q(description__contains=cln_data['search']))
+
+            if cln_data['priority']:
+                ticketsSet = ticketsSet.filter(priority=cln_data['priority'])
+
+            if cln_data['state']:
+                ticketsSet = ticketsSet.filter(state=cln_data['state'])
+            
+            ord_char = ''
+            if cln_data['order']:
+                ticketsSet = ticketsSet.filter(state=cln_data['state'])
+                ord_char = '-'
+
+            if cln_data['order_by']:
+                ticketsSet = ticketsSet.order_by(ord_char + cln_data['order_by'])
+    
+    tickets = ticketsSet.all()
     context = {
         'title': 'Ticket List',
         'tickets': tickets,
+        'filter_form': filter_form,
         'currentUserData': currentUserData,
     }
 
