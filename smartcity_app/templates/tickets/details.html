@@ -20,8 +20,20 @@
     Description: <br>
     <p><strong>{{ ticket.description }}</strong></p>
     Date Created: {{ ticket.created_timestamp }} <br>
-    Priority: {{ ticket.priority }} <br>
-    Author: {{ ticket.authorid.name }} {{ ticket.authorid.surname }} <br>
+    {%if ticket.priority == 'Lowest' %}
+        Priority: <strong class="text-success">{{ ticket.priority }}</strong> <br>
+    {% elif ticket.priority == 'Low' %}
+        Priority: <strong class="text-ifno">{{ ticket.priority }}</strong> <br>
+    {% elif ticket.priority == 'Medium' %}
+        Priority: <strong class="text-primary">{{ ticket.priority }}</strong> <br>
+    {% elif ticket.priority == 'High' %}
+        Priority: <strong class="text-warning">{{ ticket.priority }}</strong> <br>
+    {% else %}
+        Priority: <strong class="text-danger">{{ ticket.priority }}</strong> <br>
+    {% endif %}
+
+    
+    Author: <a href="{% url 'user-view' id=ticket.authorid_id %}">{{ ticket.authorid.name }} {{ ticket.authorid.surname }} </a><br>
     {% if currentUserData.role in 'Officer,Technician' %}
     Assigned Service Request: 
         {% if serviceRequest %} 
@@ -44,7 +56,8 @@
     <br>
     {% endif %}
     <!-- Page Content -->
-    <div class="accordion accordion-flush" id="accordionFlushExample">
+    <div class="accordion accordion-flush mt-3" id="accordionFlushExample">
+        {% if images %}
         <div class="accordion-item">
             <h2 class="accordion-header" id="flush-headingOne">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -69,6 +82,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         <div class="accordion-item">
             <h2 class="accordion-header" id="flush-headingTwo">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"

@@ -17,7 +17,17 @@
     Description: <br>
     <p><strong>{{ serviceRequest.description }}</strong></p>
     Date Created: {{ serviceRequest.created_timestamp }} <br>
-    Priority: {{ serviceRequest.priority }} <br>
+    {%if serviceRequest.priority == 'Lowest' %}
+        Priority: <strong class="text-success">{{ serviceRequest.priority }}</strong> <br>
+    {% elif serviceRequest.priority == 'Low' %}
+        Priority: <strong class="text-ifno">{{ serviceRequest.priority }}</strong> <br>
+    {% elif serviceRequest.priority == 'Medium' %}
+        Priority: <strong class="text-primary">{{ serviceRequest.priority }}</strong> <br>
+    {% elif serviceRequest.priority == 'High' %}
+        Priority: <strong class="text-warning">{{ serviceRequest.priority }}</strong> <br>
+    {% else %}
+        Priority: <strong class="text-danger">{{ serviceRequest.priority }}</strong> <br>
+    {% endif %}
     Officer (Author):
     <a href="{% url 'user-view' id=serviceRequest.authorid.id %}">
         {{ serviceRequest.authorid.name }} {{ serviceRequest.authorid.surname }}
@@ -45,7 +55,7 @@
 
 
 <h2>
-    Comments &nbsp;<span class="badge bg-secondary">{{ commentsCount }}</span>
+    Comments &nbsp;<small><small><span class="badge bg-secondary">{{ commentsCount }}</span></small></small>
 </h2>
 
 

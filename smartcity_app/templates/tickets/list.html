@@ -76,7 +76,19 @@
     <tr class="table-row" onclick="window.location='{{ticket.id}}/'">
       <td>{{ticket.title}}</td>
       <td>{{ticket.created_timestamp}}</td>
-      <td>{{ticket.priority}}</td>
+      <td>
+      {%if ticket.priority == 'Lowest' %}
+        <span class="text-success">{{ ticket.priority }}</span>
+      {% elif ticket.priority == 'Low' %}
+        <span class="text-ifno">{{ ticket.priority }}</span>
+      {% elif ticket.priority == 'Medium' %}
+        <span class="text-primary">{{ ticket.priority }}</span>
+      {% elif ticket.priority == 'High' %}
+        <span class="text-warning">{{ ticket.priority }}</span>
+      {% else %}
+        <span class="text-danger">{{ ticket.priority }}</span>
+      {% endif %}
+      </td>
       <!-- {% if currentUserData.role in 'Officer,Technician' %}
       <td>{{ticket.service_request}}</td>
       {% endif %} -->

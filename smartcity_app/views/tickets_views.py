@@ -146,13 +146,13 @@ def create_ticket(request: HttpRequest) -> HttpResponse:
     }
     return render(request, 'tickets/create.html', context)
 
-def edit_ticket(request: HttpRequest, id:int) -> HttpResponse:
+def edit_ticket(request: HttpRequest, ticket_id:int) -> HttpResponse:
     currentUserData = getCurrentUserDict(request)
     if currentUserData == {}:
         messages.warning(request, "You need to log in to visit this page.")
         return HttpResponseRedirect('/user/login/')
     
-    ticket = Ticket.objects.filter(id=id).first()
+    ticket = Ticket.objects.filter(id=ticket_id).first()
 
     if currentUserData['id'] != ticket.authorid_id:
         messages.error(request, 'You do not have permission to visit this page.')
@@ -162,7 +162,7 @@ def edit_ticket(request: HttpRequest, id:int) -> HttpResponse:
         ticket_form = CreateTicketForm(request.POST, instance=ticket)
         ticket_form.save()
         messages.success(request,'Ticket changed.')
-        return HttpResponseRedirect(f'/tickets/list/{id}/')
+        return HttpResponseRedirect(f'/tickets/list/{ticket_id}/')
 
     else:
         ticket_form = CreateTicketForm(instance=ticket)

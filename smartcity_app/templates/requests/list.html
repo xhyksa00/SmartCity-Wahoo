@@ -45,7 +45,6 @@
             {{ filter_form.order }}
           </div>
           <div class="col-3"></div>
-          <br>
           <div class="col-3  mt-2">
             <button type="submit" class="btn btn-primary me-3">Search</button>
           </div>
@@ -72,7 +71,20 @@
     <tr class="table-row" onclick="window.location='{{request.id}}/'">
       <td>{{request.ticketid.title}}</td>
       <td>{{request.created_timestamp}}</td>
-      <td>{{request.priority}}</td>
+      <td>
+        {%if request.priority == 'Lowest' %}
+          <span class="text-success">{{ request.priority }}</span>
+        {% elif request.priority == 'Low' %}
+          <span class="text-ifno">{{ request.priority }}</span>
+        {% elif request.priority == 'Medium' %}
+          <span class="text-primary">{{ request.priority }}</span>
+        {% elif request.priority == 'High' %}
+          <span class="text-warning">{{ request.priority }}</span>
+        {% else %}
+          <span class="text-danger">{{ request.priority }}</span>
+        {% endif %}
+        </td>
+      <!-- <td>{{request.priority}}</td> -->
       <td>
         {% if request.state == 'Finished' %}
         <span class="badge bg-success"> {{ request.state }} </span>
