@@ -53,6 +53,56 @@ def list_requests(request: HttpRequest) -> HttpResponse:
 
     return render(request, 'requests/list.html', context)
 
+#TODO:
+def list_cerated_by(request: HttpRequest, author_id:int) -> HttpResponse:
+    currentUserData = getCurrentUserDict(request)
+    if currentUserData == {}:
+        messages.warning(request, 'You need to log in to visit this page.')
+        return HttpResponseRedirect('/user/login/')
+
+    print(currentUserData)
+    if currentUserData['role'] not in ['Technician', 'Officer']:
+        messages.warning(request, 'You don\'t have sufficient rights to access this page.')
+        return HttpResponseRedirect('/')
+
+    requestSet = ServiceRequest.objects.filter(authorid_id=author_id).select_related('ticketid')
+
+    if request.method == 'GET':
+        filter_form = RequestFilterForm(request.GET)
+        if filter_form.is_valid():
+            cln_data = filter_form.cleaned_data
+            # Get filtering data from GET request and then apply filters to Queryset of tickets one-by-one
+            if cln_data['search']:
+                requestSet = requestSet.filter( Q(ticketid__title__contains=cln_data['search']) |
+                                                Q(description__contains=cln_data['search']))
+
+            if cln_data['priority'] and cln_data['priority'] != 'any':
+                requestSet = requestSet.filter(priority=cln_data['priority'])
+
+            if cln_data['state'] and cln_data['state'] != 'any':
+                requestSet = requestSet.filter(state=cln_data['state'])
+            
+            ord_char = ''
+            if cln_data['order'] == 'dsc':
+                ord_char = '-'
+
+            if cln_data['order_by']:
+                requestSet = requestSet.order_by(ord_char + cln_data['order_by'])
+
+    requests = requestSet.all()
+    context = {
+        'title': 'Request List',
+        'requests': requests,
+        'filter_form': filter_form,
+        'currentUserData': currentUserData,
+    }
+
+    return render(request, 'requests/created_by.html', context)
+
+#TODO:
+def list_assigned_to(request: HttpRequest, assignee_id: int) -> HttpResponse:
+    context = {}
+    return render(request, 'requests/assigned_to.html', context)
 
 # TODO: Finish HTML - requests/details.html
 def show_request(request: HttpRequest, id:int) -> HttpResponse:
@@ -120,7 +170,6 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
 
     return render(request, 'requests/details.html', context)
 
-# TODO:FIXME:
 def create_request(request: HttpRequest, ticket_id: int = -1) -> HttpResponse:
     currentUserData = getCurrentUserDict(request)
     if currentUserData == {}:

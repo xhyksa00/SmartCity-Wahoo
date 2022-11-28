@@ -178,7 +178,7 @@ class Ticket(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True, max_length=1000)
-    state = models.CharField(max_length=17, blank=True, null=True)
+    state = models.CharField(max_length=20, blank=True, null=True)
     created_timestamp = models.DateTimeField(blank=True, null=True, auto_now_add=True)
     priority = models.CharField(max_length=7)
     authorid = models.ForeignKey('User', models.DO_NOTHING, db_column='authorId', blank=True, null=True)  # Field name made lowercase.
