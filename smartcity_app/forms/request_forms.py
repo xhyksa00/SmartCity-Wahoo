@@ -73,17 +73,6 @@ class AssignTechnicianForm(forms.ModelForm):
         self.fields['technicianid'].widget.required = False
         self.fields['technicianid'].widget.attrs['onchange'] = 'this.form.submit()'
 
-# class CommentForm(forms.ModelForm):
-#     class Meta:
-#         model = ServiceRequestComments
-#         fields = ['text']
-#         widgets = {
-#             'text' : forms.Textarea(attrs={
-#                 'class':'form-control',
-#                 'rows' : '3'
-#             }),
-#         }
-
 class ServiceRCommentForm(forms.ModelForm):
     class Meta:
         model = ServiceRequestComments
@@ -94,3 +83,54 @@ class ServiceRCommentForm(forms.ModelForm):
                 'rows' : '3'
             }),
         }
+
+class RequestFilterForm(forms.Form):
+    class Meta:
+        fields = ['search', 'priority', 'state', 'order', 'order_by']
+
+        priority_choices = [
+            ('any', 'Any'),
+            ('Lowest', 'Lowest'),
+            ('Low', 'Low'),
+            ('Medium', 'Medium'),
+            ('High', 'High'),
+            ('Highest', 'Highest'),
+        ]
+
+        order_choices = [
+            ('asc', 'Ascending'),
+            ('dsc', 'Descending'),
+        ]
+
+        state_choices = [
+            ('any', 'Any'),
+            ('Open', 'Open'),
+            ('Waiting', 'Waiting'),
+            ('In Progress', 'In Progress'),
+            ('Closed: Denied', 'Closed: Denied'),
+            ('Closed: Fixed', 'Closed: Fixed'),
+            ('Closed: Duplicate', 'Closed: Duplicate'),
+        ]
+
+        order_by_choices = [
+            ('ticketid__title', 'Relevant Ticket'),
+            ('priority', 'Priority'),
+            # ('date', 'Date'),
+            ('state', 'State'),
+        ]
+
+    search = forms.CharField()
+    priority = forms.ChoiceField(choices=Meta.priority_choices)
+    state = forms.ChoiceField(choices=Meta.state_choices)
+    order = forms.ChoiceField(choices=Meta.order_choices)
+    order_by = forms.ChoiceField(choices=Meta.order_by_choices)
+
+    def __init__(self, *args, **kwargs):
+        super(RequestFilterForm, self).__init__(*args, **kwargs)
+        for fieldName in self.Meta.fields:
+            self.fields[fieldName].required = False
+        self.fields['search'].widget.attrs['class'] = 'form-control'
+        self.fields['priority'].widget.attrs['class'] = 'form-select'
+        self.fields['state'].widget.attrs['class'] = 'form-select'
+        self.fields['order'].widget.attrs['class'] = 'form-select'
+        self.fields['order_by'].widget.attrs['class'] = 'form-select'

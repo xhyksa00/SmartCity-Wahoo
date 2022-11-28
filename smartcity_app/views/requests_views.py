@@ -3,8 +3,9 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from ..models import Ticket, User, ServiceRequest, ServiceRequestComments
 from .helpers import getCurrentUserDict, getLoggedUserObject, CommentFull
 from django.contrib import messages
-from ..forms.request_forms import CreateRequestForm, AssignTechnicianForm, ServiceRCommentForm
+from ..forms.request_forms import CreateRequestForm, AssignTechnicianForm, ServiceRCommentForm, RequestFilterForm
 from django.core.files.storage import FileSystemStorage
+from django.db.models import Q
 
 # NOTE: DONE!
 def list_requests(request: HttpRequest) -> HttpResponse:
@@ -18,10 +19,35 @@ def list_requests(request: HttpRequest) -> HttpResponse:
         messages.warning(request, 'You don\'t have sufficient rights to access this page.')
         return HttpResponseRedirect('/')
 
-    requests = ServiceRequest.objects.all()
+    requestSet = ServiceRequest.objects.select_related('ticketid')
+
+    if request.method == 'GET':
+        filter_form = RequestFilterForm(request.GET)
+        if filter_form.is_valid():
+            cln_data = filter_form.cleaned_data
+            # Get filtering data from GET request and then apply filters to Queryset of tickets one-by-one
+            if cln_data['search']:
+                requestSet = requestSet.filter( Q(ticketid__title__contains=cln_data['search']) |
+                                                Q(description__contains=cln_data['search']))
+
+            if cln_data['priority'] and cln_data['priority'] != 'any':
+                requestSet = requestSet.filter(priority=cln_data['priority'])
+
+            if cln_data['state'] and cln_data['state'] != 'any':
+                requestSet = requestSet.filter(state=cln_data['state'])
+            
+            ord_char = ''
+            if cln_data['order'] == 'dsc':
+                ord_char = '-'
+
+            if cln_data['order_by']:
+                requestSet = requestSet.order_by(ord_char + cln_data['order_by'])
+
+    requests = requestSet.all()
     context = {
         'title': 'Request List',
         'requests': requests,
+        'filter_form': filter_form,
         'currentUserData': currentUserData,
     }
 
