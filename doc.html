@@ -47,11 +47,12 @@
 <p>Uveďte prosím existující zástupce <strong>všech rolí uživatelů</strong>.</p>
 <table>
 <tr><th>Login</th><th>Heslo</th><th>Role</th></tr>
-<tr><td>admin</td><td>admin</td><td>Administrátor</td></tr>
+<tr><td>admin</td><td>badmin</td><td>Administrátor</td></tr> 
 <tr><td>ci@tizen.com</td><td>citizen</td><td>Občan</td></tr>
 <tr><td>tech@nician.com</td><td>technician</td><td>Servisný Technik</td></tr>
 <tr><td>of@ficer.com</td><td>officer</td><td>Správca Mesta</td></tr>
 </table>
+
 
 <p>(Diagram případů užití není nutné vkládat, pokud IS implementuje role a případy užití definované zadáním.) <strong style="font-size: 26px;">&check;</strong></p> 
 
@@ -60,7 +61,27 @@
 <p>Přiložte odkaz na komentované video demostrující použití informačního systému. Zaměřte se na případy užití definované zadáním (např. registrace uživatele, správa uživatelů a činnosti jednotlivých rolí). Video nahrajte například na VUT Google Drive, kde ho bude možné přímo spustit z odkazu.</p> 
 
 <h2>Implementace</h2>
-<p>Stručná dokumentace k implementaci, která popisuje, které části projektu (např. PHP skripty) implementují jednotlivé případy použití.</p>
+<p>
+    Informačný systém je implementovaný pomocou frameworku Django. Systém je rozdelený na dve aplikácie, ktoré sú navzájom nezávislé - <i>smartcity_app</i> a <i>smartcity_admin</i>. 
+    Tieto aplikácie sú uložené v adresároch s rovnakými názvami.
+
+</p>
+<h3>smartcity_app</h3>
+<p>
+    Táto aplikácia implementuje celý užívateľský modul. Používajú ju všetci užívatelia, okrem Admina. Všetky view funkcie (jeden view = logika a generovanie jednej podstránky) sú v adresári <i>views/</i> - 
+    tam sú rozdelené do súborov podľa dát s ktorými primárne pracujú - requests, tickets, users a špeciálny rootpage view. <br>
+    V djangu sa formuláre definujú ako samostatné triedy, ktoré sa neskôr vložia do html predlôh. Formuláre sú definováne v zložke <i>forms/</i> a sú opäť rozdelené podľa kategórie dát.
+    Spomínané html predlohy sú v zložke <i>templates/</i>. <br>
+    Prepojenie url adries a ich korešpondujúcich view funkcí je definované v súbore <i>urls.py</i>.
+    Definície tried odrážájúce databázový model (modely) sú v automaticky generovanom súbore <i>models.py</i>.
+</p>
+<h3>smartcity_admin</h3>
+<p>
+    Administrátorský modul je od toho užívateľského jednoduchší, keďže pracuje iba s užívateľskými dátami. <br>
+    Rozdelenie funkcionality do súborov je podobné, no pre menšiu funkcionalitu nemusíme deliť moduly do podkategórii podľa typu dát. <br>
+    View funkcie sú vo <i>vievs.py</i>, predlohy v <i>templates.py</i>, formuláre vo <i> forms.py</i> a modely v <i>models.py</i>.
+</p>
+
 
 <h3>Databáze</h3>
 
