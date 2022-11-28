@@ -34,7 +34,7 @@
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'ticket-list' %}">All</a></li>
-              <li><a class="dropdown-item" href="#">Created by me</a></li>
+              <li><a class="dropdown-item" href="{% url 'ticket-created-by' author_id=currentUserData.id %}">Created by me</a></li>
             </ul>
           </li>
           {% if currentUserData.role in "Technician,Officer" %}
@@ -45,9 +45,9 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'request-list' %}">All</a></li>
               {% if currentUserData.role == 'Technician' %}
-              <li><a class="dropdown-item" href="#">Assigned to me</a></li>
+              <li><a class="dropdown-item" href="{% url 'request-assigned' assignee_id=currentUserData.id %}">Assigned to me</a></li>
               {% elif currentUserData.role == "Officer" %}
-              <li><a class="dropdown-item" href="#">Created by me</a></li>
+              <li><a class="dropdown-item" href="{% url 'request-created-by' author_id=currentUserData.id %}">Created by me</a></li>
               {% endif %}
             </ul>
           </li>

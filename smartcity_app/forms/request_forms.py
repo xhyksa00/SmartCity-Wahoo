@@ -113,10 +113,11 @@ class RequestFilterForm(forms.Form):
         ]
 
         order_by_choices = [
+            ('id', 'ID'),
             ('ticketid__title', 'Relevant Ticket'),
             ('priority', 'Priority'),
             ('created_timestamp', 'Date'),
-            ('state', 'State'),
+            ('state', 'Status'),
         ]
 
     search = forms.CharField()
@@ -130,6 +131,7 @@ class RequestFilterForm(forms.Form):
         for fieldName in self.Meta.fields:
             self.fields[fieldName].required = False
         self.fields['search'].widget.attrs['class'] = 'form-control'
+        self.fields['search'].widget.attrs['placeholder'] = 'Search Relevant Ticekt titles and Request descriptions'
         self.fields['priority'].widget.attrs['class'] = 'form-select'
         self.fields['state'].widget.attrs['class'] = 'form-select'
         self.fields['order'].widget.attrs['class'] = 'form-select'

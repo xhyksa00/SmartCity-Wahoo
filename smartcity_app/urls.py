@@ -20,6 +20,7 @@ userUrls = [
 
 ticketsUrls = [
     path('tickets/list/', tickets_views.list_tickets, name='ticket-list'),
+    path('tickets/list-by/<int:author_id>', tickets_views.list_created_by, name='ticket-created-by'),
     path('tickets/list/<int:id>/', tickets_views.show_ticket, name='ticket-details'),
     path('tickets/create/', tickets_views.create_ticket, name='ticket-create'),
     path('tickets/edit/<int:ticket_id>/', tickets_views.edit_ticket, name='ticket-edit'),
@@ -27,6 +28,8 @@ ticketsUrls = [
 
 requestsUrls = [
     path('requests/list/', requests_views.list_requests, name='request-list'),
+    path('requests/list-by/<int:author_id>', requests_views.list_cerated_by, name='request-created-by'),
+    path('requests/list-to/<int:assignee_id>', requests_views.list_assigned_to, name='request-assigned-to'),
     path('requests/list/<int:id>/', requests_views.show_request, name='request-details'),
     path('requests/create/', requests_views.create_request, name='request-create'),
     path('requests/create/<int:ticket_id>/', requests_views.create_request, name='request-create-to-ticket'),

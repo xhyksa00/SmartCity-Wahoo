@@ -46,6 +46,45 @@ def list_tickets(request: HttpRequest) -> HttpResponse:
 
     return render(request, 'tickets/list.html', context)
 
+def list_created_by(request: HttpRequest, author_id: int) -> HttpResponse:
+    currentUserData = getCurrentUserDict(request)
+    if currentUserData == {}:
+        messages.warning(request, "You need to log in to visit this page.")
+        return HttpResponseRedirect('/user/login/')
+
+    ticketsSet = Ticket.objects.filter(authorid_id=author_id)
+    if request.method == 'GET':
+        filter_form = TicketFilterForm(request.GET)
+        if filter_form.is_valid():
+            cln_data = filter_form.cleaned_data
+            # Get filtering data from GET request and then apply filters to Queryset of tickets one-by-one
+            if cln_data['search']:
+                ticketsSet = ticketsSet.filter( Q(title__contains=cln_data['search']) |
+                                                Q(description__contains=cln_data['search']))
+
+            if cln_data['priority'] and cln_data['priority'] != 'any':
+                ticketsSet = ticketsSet.filter(priority=cln_data['priority'])
+
+            if cln_data['state'] and cln_data['state'] != 'any':
+                ticketsSet = ticketsSet.filter(state=cln_data['state'])
+            
+            ord_char = ''
+            if cln_data['order'] == 'dsc':
+                ord_char = '-'
+
+            if cln_data['order_by']:
+                ticketsSet = ticketsSet.order_by(ord_char + cln_data['order_by'])
+    
+    tickets = ticketsSet.all()
+    context = {
+        'title': 'Ticket List',
+        'tickets': tickets,
+        'filter_form': filter_form,
+        'currentUserData': currentUserData,
+    }
+
+    return render(request, 'tickets/created_by.html', context)
+
 def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
     currentUserData = getCurrentUserDict(request)
     if currentUserData == {}:
@@ -69,8 +108,6 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
             if priorityFormPOST.is_valid():
                 ticket.priority = priorityFormPOST.cleaned_data['priority']
                 ticket.save()
-
-    
 
     priorityForm = PriorityForm()
     priorityForm.fields['priority'].initial = ticket.priority

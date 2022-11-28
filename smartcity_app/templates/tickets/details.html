@@ -1,7 +1,7 @@
 {% extends "navbar_base.html" %}
 {% block content %}
 
-<h1>{{ ticket.title }}<br>
+<h1>(#{{ ticket.id }}) {{ ticket.title }}<br>
 </h1>
 <h2>
     {% if ticket.state == 'Closed: Duplicate' or ticket.state == 'Closed: Denied' %}

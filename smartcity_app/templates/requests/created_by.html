@@ -7,7 +7,7 @@
   }
 </style>
 
-<h1>Service requests</h1>
+<h1>Service Requests by officer {{request.authorid.name}} {{request.authorid.surname}}</h1>
 <div class="accordion accordion-flush border" id="accordionFilter">
   <div class="accordion-item">
     <h2 class="accordion-header" id="headingOne">
@@ -71,7 +71,7 @@
   </thead>
   <tbody class="bg-body">
     {% for request in requests %}
-    <tr class="table-row" onclick="window.location='{{request.id}}/'">
+    <tr class="table-row" onclick="window.location.href='{% url 'request-details' id=request.id %}'">
       <td><strong>#{{request.id}}</strong></td>
       <td>{{request.ticketid.title}}</td>
       <td>{{request.created_timestamp}}</td>
