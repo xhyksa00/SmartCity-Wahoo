@@ -16,6 +16,13 @@
     Role:
     <strong>{{ role }}</strong> <br>
     {% endif %}
+    <a href="{% url 'ticket-created-by' author_id=id %}">Created Tickets</a><br>
+    {% if role == 'Technician' %}
+    <a href="{% url 'ticket-created-by' author_id=id %}">Assigned Requests</a><br>
+    {% endif %}
+    {% if role == 'Officer' %}
+    <a href="{% url 'request-created-by' author_id=id %}">Created Requests</a><br>
+    {% endif %}
 </div>
 
 {% if owner %}
