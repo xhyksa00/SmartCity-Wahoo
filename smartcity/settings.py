@@ -99,8 +99,10 @@ DATABASES = {
         'NAME': os.environ['DATABASE_NAME'],
         'USER': os.environ['DATABASE_USER'],
         'PASSWORD': os.environ['DATABASE_PASSWORD'],
-        'PORT':'3306',
-        'HOST':'sm9j2j5q6c8bpgyq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
+        'PORT': os.environ['DATABASE_PORT'],
+        'HOST': os.environ['DATABASE_HOST'],
+        # 'PORT':'3306',
+        # 'HOST':'sm9j2j5q6c8bpgyq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }

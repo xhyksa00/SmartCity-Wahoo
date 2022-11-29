@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS login_info;
 DROP TABLE IF EXISTS admin_info;
-DROP TABLE IF EXISTS images;
+DROP TABLE IF EXISTS image;
 DROP TABLE IF EXISTS service_request_comments;
 DROP TABLE IF EXISTS ticket_comments;
 DROP TABLE IF EXISTS service_request;
@@ -35,7 +35,7 @@ CREATE TABLE ticket (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(50) NOT NULL,
     description TEXT(1000) NOT NULL,
-    state ENUM ('Open','Waiting','In Progress','Closed: Denied','Closed: Fixed','Closed: Duplicate'),
+    state ENUM ('Open','Waiting For Approval','In Progress','Closed: Fixed','Closed: Denied','Closed: Duplicate'),
     created_timestamp TIMESTAMP DEFAULT current_timestamp,
     priority ENUM ('Lowest','Low','Medium','High','Highest') NOT NULL,
     authorId INT,
@@ -72,8 +72,6 @@ CREATE TABLE service_request_comments (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     text VARCHAR(255),
     created_timestamp TIMESTAMP DEFAULT current_timestamp,
-    ticketId INT,
-    FOREIGN KEY (ticketId) REFERENCES  ticket (id) ON DELETE SET NULL,
     authorId INT,
     FOREIGN KEY (authorId) REFERENCES user(id) ON DELETE SET NULL,
     requestId INT,
@@ -136,7 +134,6 @@ VALUES
     ('Samko', 'Sadik', 'citizen'),
     ('Tech', 'Nician', 'technician'),
     ('Of', 'Ficer', 'officer');
-#     ('Ad', 'Min', 'admin');
 
 INSERT INTO login_info (email, userId, password)
 VALUES
@@ -145,7 +142,6 @@ VALUES
     ('s@s.s', 3, '$2b$12$cb/OKBCpExqNPAw8BRTCyOU/F7MKJlqh9MbwHRVBMinowCg1UaihK'),
     ('tech@nician.com', 4, '$2b$12$A4PTGg5TFm1YecVbhgqviODRfu1SMOqnXQbk548kydUk6xBNaBzh.'),
     ('of@ficer.com', 5, '$2b$12$s2hc9RGBLNj7SpasSGiZoOnW8zUkaLdfJRU0sr5K9xJk2NX1U32eS');
-#     ('ad@min.com', 6, '$2b$12$dvYUmELe4n5gUrf3koVFsuqjpCZWpnQQ7JfX7.688r948b0tijiza');
 
 -- TICKETS
 INSERT INTO ticket (title, description, state, priority, authorId)
