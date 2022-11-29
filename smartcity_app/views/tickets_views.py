@@ -76,10 +76,12 @@ def list_created_by(request: HttpRequest, author_id: int) -> HttpResponse:
                 ticketsSet = ticketsSet.order_by(ord_char + cln_data['order_by'])
     
     tickets = ticketsSet.all()
+    author = User.objects.filter(id=author_id).first()
     context = {
         'title': 'Ticket List',
         'tickets': tickets,
         'filter_form': filter_form,
+        'author': author,
         'currentUserData': currentUserData,
     }
 

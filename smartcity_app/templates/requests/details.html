@@ -19,16 +19,23 @@
     {{ serviceRequest.description }}
     </div>
     Date Created: <strong>{{ serviceRequest.created_timestamp }} </strong><br>
-    {%if serviceRequest.priority == 'Lowest' %}
-        Priority: <strong class="text-success">{{ serviceRequest.priority }}</strong> <br>
-    {% elif serviceRequest.priority == 'Low' %}
-        Priority: <strong class="text-ifno">{{ serviceRequest.priority }}</strong> <br>
-    {% elif serviceRequest.priority == 'Medium' %}
-        Priority: <strong class="text-primary">{{ serviceRequest.priority }}</strong> <br>
-    {% elif serviceRequest.priority == 'High' %}
-        Priority: <strong class="text-warning">{{ serviceRequest.priority }}</strong> <br>
+    {% if is_assignee %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        Priority: {{ priority_form.priority }}
+    </form>
     {% else %}
-        Priority: <strong class="text-danger">{{ serviceRequest.priority }}</strong> <br>
+        {%if serviceRequest.priority == 'Lowest' %}
+            Priority: <strong class="text-success">{{ serviceRequest.priority }}</strong> <br>
+        {% elif serviceRequest.priority == 'Low' %}
+            Priority: <strong class="text-ifno">{{ serviceRequest.priority }}</strong> <br>
+        {% elif serviceRequest.priority == 'Medium' %}
+            Priority: <strong class="text-primary">{{ serviceRequest.priority }}</strong> <br>
+        {% elif serviceRequest.priority == 'High' %}
+            Priority: <strong class="text-warning">{{ serviceRequest.priority }}</strong> <br>
+        {% else %}
+            Priority: <strong class="text-danger">{{ serviceRequest.priority }}</strong> <br>
+        {% endif %}
     {% endif %}
     Officer (Author):
     {% if serviceRequest.authorid %}

@@ -54,12 +54,27 @@ class CreateRequestForm(forms.ModelForm):
         self.fields['technicianid'].widget.choices = tech_choices
         self.fields['technicianid'].widget.attrs['class'] = 'form-select'
 
+class PriorityForm(forms.ModelForm):
+    class Meta:
+        model = ServiceRequest
+        fields = ['priority']
+
+    priority = forms.ChoiceField()
+
+    def __init__(self, *args, **kwargs):
+        super(PriorityForm, self).__init__(*args, **kwargs)
+        choices = [('Lowest','Lowest'),('Low','Low'),('Medium','Medium'),('High','High'),('Highest','Highest')]
+
+        self.fields['priority'].widget.choices = choices
+        self.fields['priority'].widget.required = False
+        self.fields['priority'].widget.attrs['onchange'] = 'this.form.submit()'
 
 class AssignTechnicianForm(forms.ModelForm):
     class Meta:
         model = ServiceRequest
         fields = ['technicianid']
-        technicianid = forms.ChoiceField()
+        
+    technicianid = forms.ChoiceField()
 
     def __init__(self, *args, **kwargs):
         super(AssignTechnicianForm, self).__init__(*args, **kwargs)

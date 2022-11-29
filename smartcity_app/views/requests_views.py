@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from ..models import Ticket, User, ServiceRequest, ServiceRequestComments
 from .helpers import getCurrentUserDict, getLoggedUserObject, CommentFull
 from django.contrib import messages
-from ..forms.request_forms import CreateRequestForm, AssignTechnicianForm, ServiceRCommentForm, RequestFilterForm
+from ..forms.request_forms import CreateRequestForm, AssignTechnicianForm, ServiceRCommentForm, RequestFilterForm, PriorityForm
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
 
@@ -13,7 +13,6 @@ def list_requests(request: HttpRequest) -> HttpResponse:
         messages.warning(request, 'You need to log in to visit this page.')
         return HttpResponseRedirect('/user/login/')
 
-    print(currentUserData)
     if currentUserData['role'] not in ['Technician', 'Officer']:
         messages.warning(request, 'You don\'t have sufficient rights to access this page.')
         return HttpResponseRedirect('/')
@@ -58,12 +57,13 @@ def list_cerated_by(request: HttpRequest, author_id:int) -> HttpResponse:
         messages.warning(request, 'You need to log in to visit this page.')
         return HttpResponseRedirect('/user/login/')
 
-    print(currentUserData)
     if currentUserData['role'] not in ['Technician', 'Officer']:
         messages.warning(request, 'You don\'t have sufficient rights to access this page.')
         return HttpResponseRedirect('/')
 
     requestSet = ServiceRequest.objects.filter(authorid_id=author_id).select_related('ticketid')
+    author = User.objects.filter(id=author_id).first()
+    print(author)
 
     if request.method == 'GET':
         filter_form = RequestFilterForm(request.GET)
@@ -92,6 +92,7 @@ def list_cerated_by(request: HttpRequest, author_id:int) -> HttpResponse:
         'title': 'Request List',
         'requests': requests,
         'filter_form': filter_form,
+        'author': author,
         'currentUserData': currentUserData,
     }
 
@@ -104,7 +105,6 @@ def list_assigned_to(request: HttpRequest, assignee_id: int) -> HttpResponse:
         messages.warning(request, 'You need to log in to visit this page.')
         return HttpResponseRedirect('/user/login/')
 
-    print(currentUserData)
     if currentUserData['role'] not in ['Technician', 'Officer']:
         messages.warning(request, 'You don\'t have sufficient rights to access this page.')
         return HttpResponseRedirect('/')
@@ -134,10 +134,12 @@ def list_assigned_to(request: HttpRequest, assignee_id: int) -> HttpResponse:
                 requestSet = requestSet.order_by(ord_char + cln_data['order_by'])
 
     requests = requestSet.all()
+    assignee = User.objects.filter(id=assignee_id).first()
     context = {
         'title': 'Request List',
         'requests': requests,
         'filter_form': filter_form,
+        'assignee': assignee,
         'currentUserData': currentUserData,
     }
 
@@ -154,7 +156,7 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
         return HttpResponseRedirect('/')
 
     serviceRequest = ServiceRequest.objects.filter(id=id).select_related('authorid','technicianid').all().first()
-
+    print(serviceRequest.authorid)
     assign_form = {}
     if currentUserData['role'] == 'Officer':
         # technician = serviceRequest.technicianid
@@ -182,6 +184,21 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
             # else:
             #     assign_form.fields['technicianid'].initial = 'none'
 
+    is_assignee = False
+    priority_form = {}
+    if currentUserData['id'] == serviceRequest.technicianid_id:
+        is_assignee = True
+        if request.method == 'POST':
+            priority_form = PriorityForm(request.POST)
+            if priority_form.is_valid():
+                serviceRequest.priority = priority_form.cleaned_data['priority']
+                serviceRequest.save()
+
+                messages.success(request,'Priority changed.')
+                return HttpResponseRedirect(f'/requests/list/{id}/')
+        else:
+            priority_form = PriorityForm(instance=serviceRequest)
+
     owner = (serviceRequest.authorid_id == currentUserData['id'])
     comments = ServiceRequestComments.objects.filter(requestid_id = id).all()
     fullComments = []
@@ -202,6 +219,8 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
         'serviceRequest': serviceRequest,
         'currentUserData': currentUserData,
         'assign_form': assign_form,
+        'priority_form': priority_form,
+        'is_assignee': is_assignee,
         'owner': owner,
         'comments' : fullComments,
         'commentsCount' : len(fullComments),
