@@ -45,7 +45,7 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'request-list' %}">All</a></li>
               {% if currentUserData.role == 'Technician' %}
-              <li><a class="dropdown-item" href="{% url 'request-assigned' assignee_id=currentUserData.id %}">Assigned to me</a></li>
+              <li><a class="dropdown-item" href="{% url 'request-assigned-to' assignee_id=currentUserData.id %}">Assigned to me</a></li>
               {% elif currentUserData.role == "Officer" %}
               <li><a class="dropdown-item" href="{% url 'request-created-by' author_id=currentUserData.id %}">Created by me</a></li>
               {% endif %}
