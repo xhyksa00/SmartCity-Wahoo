@@ -69,6 +69,35 @@ class PriorityForm(forms.ModelForm):
         self.fields['priority'].widget.required = False
         self.fields['priority'].widget.attrs['onchange'] = 'this.form.submit()'
 
+class EstimatedPriceForm(forms.ModelForm):
+    class Meta:
+        model = ServiceRequest
+        fields = ['price']
+
+    price = forms.IntegerField()
+
+    def __init__(self, *args, **kwargs):
+        super(EstimatedPriceForm, self).__init__(*args, **kwargs)
+
+        self.fields['price'].widget.required = False
+        self.fields['price'].widget.attrs['onchange'] = 'this.form.submit()'
+
+class ExpectedDateForm(forms.ModelForm):
+    class Meta:
+        model = ServiceRequest
+        fields = ['days_remaining']
+
+    days_remaining = forms.DateInput()
+
+    def __init__(self, *args, **kwargs):
+        super(ExpectedDateForm, self).__init__(*args, **kwargs)
+
+        self.fields['days_remaining'].widget.required = False
+        # self.fields['days_remaining'].widget = forms.DateInput()
+        self.fields['days_remaining'].widget.attrs['onchange'] = 'this.form.submit()'
+        self.fields['days_remaining'].widget.attrs['type'] = 'date'
+
+
 class AssignTechnicianForm(forms.ModelForm):
     class Meta:
         model = ServiceRequest

@@ -61,9 +61,20 @@
         {% endif %}
         <br>
     {% endif %}
-    <!-- TODO: -->
-    Expected Completion Date: ... <br>
-    Estimated Expenses: ... <br>
+    {% if allow_tech_changes %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <!-- <input type="date"> -->
+        Expected Completion Date: {{ expected_date_form.days_remaining }}
+    </form>
+    <form action="" method="POST">
+        {% csrf_token %}
+        Estimated Expenses: {{ estimated_price_form.price }},- Kč
+    </form>
+    {% else %}
+    Expected Completion Date: {{ serviceRequest.days_remaining }} <br>
+    Estimated Expenses: {{ serviceRequest.price }},- Kč <br>
+    {% endif %}
 </div>
 
 

@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from ..models import Ticket, User, ServiceRequest, ServiceRequestComments
 from .helpers import getCurrentUserDict, getLoggedUserObject, CommentFull
 from django.contrib import messages
-from ..forms.request_forms import CreateRequestForm, AssignTechnicianForm, ServiceRCommentForm, RequestFilterForm, PriorityForm
+from ..forms.request_forms import CreateRequestForm, AssignTechnicianForm, ServiceRCommentForm, RequestFilterForm, PriorityForm, ExpectedDateForm, EstimatedPriceForm
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
 
@@ -98,7 +98,6 @@ def list_cerated_by(request: HttpRequest, author_id:int) -> HttpResponse:
 
     return render(request, 'requests/created_by.html', context)
 
-#TODO:
 def list_assigned_to(request: HttpRequest, assignee_id: int) -> HttpResponse:
     currentUserData = getCurrentUserDict(request)
     if currentUserData == {}:
@@ -145,7 +144,6 @@ def list_assigned_to(request: HttpRequest, assignee_id: int) -> HttpResponse:
 
     return render(request, 'requests/assigned_to.html', context)
 
-# TODO: Finish HTML - requests/details.html
 def show_request(request: HttpRequest, id:int) -> HttpResponse:
     currentUserData = getCurrentUserDict(request)
     if currentUserData == {}:
@@ -199,6 +197,35 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
         else:
             priority_form = PriorityForm(instance=serviceRequest)
 
+    allow_tech_changes = False
+    expected_date_form = {}
+    estimated_price_form = {}
+    if (currentUserData['id'] == serviceRequest.technicianid_id):
+        allow_tech_changes = True
+        if request.method == 'POST':
+            if 'price' in request.POST:
+                estimated_price_form = EstimatedPriceForm(request.POST)
+                if estimated_price_form.is_valid():
+                    serviceRequest.price = estimated_price_form.cleaned_data['price']
+                    serviceRequest.save()
+
+                    messages.success(request,'Estimated price changed.')
+                    return HttpResponseRedirect(f'/requests/list/{id}/')
+
+            elif 'days_remaining' in request.POST:
+                expected_date_form = ExpectedDateForm(request.POST)
+                if expected_date_form.is_valid():
+                    serviceRequest.days_remaining = expected_date_form.cleaned_data['days_remaining']
+                    serviceRequest.save()
+
+                    messages.success(request,'Expected completion date changed.')
+                    return HttpResponseRedirect(f'/requests/list/{id}/')
+            
+
+        else:
+            expected_date_form = ExpectedDateForm(instance=serviceRequest)
+            estimated_price_form = EstimatedPriceForm(instance=serviceRequest)
+
     owner = (serviceRequest.authorid_id == currentUserData['id'])
     comments = ServiceRequestComments.objects.filter(requestid_id = id).all()
     fullComments = []
@@ -222,6 +249,9 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
         'priority_form': priority_form,
         'allow_prio_change': allow_prio_change,
         'owner': owner,
+        'allow_tech_changes': allow_tech_changes,
+        'expected_date_form': expected_date_form,
+        'estimated_price_form': estimated_price_form,
         'comments' : fullComments,
         'commentsCount' : len(fullComments),
         'comment_form' : ServiceRCommentForm()
@@ -296,4 +326,4 @@ def edit_request(request: HttpRequest, id:int) -> HttpResponse:
     #     'currentUserData': currentUserData
     # }
 
-    return render(request, 'tickets/edit.html', {})
+    return render(request, 'requests/edit.html', {})

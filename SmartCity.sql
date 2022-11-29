@@ -46,7 +46,7 @@ CREATE TABLE service_request (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     description TEXT(1000) NOT NULL,
     created_timestamp TIMESTAMP DEFAULT current_timestamp,
-    days_remaining INT DEFAULT 0,
+    days_remaining DATE DEFAULT NULL,
     price INT DEFAULT 0,
     priority ENUM ('Lowest','Low','Medium','High','Highest') NOT NULL,
     state ENUM ('Open', 'In Progress', 'Finished'),
@@ -124,24 +124,22 @@ CREATE TRIGGER set_request_technician_null
 
 -- ADMIN
 INSERT INTO admin_info (username, password)
-VALUES ('admin', '$2b$12$3Jjxd9gbeno3xFiGNzVaneqgStxPXTE551.aDNFWUTdagj4ukprve');
+VALUES ('admin', '$2b$12$4i75DNEV/oIyQdGDiagqre/zvZVzl0KhFnBYsZ0hIMg0X5X0BBzFO');
 
 -- USERS
 INSERT INTO user (name, surname, role)
 VALUES
     ('Jan', 'Novak', 'citizen'),
-    ('Don Leopold', 'Juan Nemcek', 'citizen'),
-    ('Samko', 'Sadik', 'citizen'),
+    ('Ci', 'Tizen', 'citizen'),
     ('Tech', 'Nician', 'technician'),
     ('Of', 'Ficer', 'officer');
 
 INSERT INTO login_info (email, userId, password)
 VALUES
     ('jan.novak@gmail.com', 1, '$2b$12$DNLUpKOzdfSWxx232ng3eee70n47lAZHvMGrq1Bwry2ZO/PPlekNS'),
-    ('don.juan@gmail.com', 2, '$2b$12$obxW/cGVbfI2WLP1rKJAVOhLHU3QkuxC58kJ5ZvwCd0pDJ8ROrbqS'),
-    ('s@s.s', 3, '$2b$12$cb/OKBCpExqNPAw8BRTCyOU/F7MKJlqh9MbwHRVBMinowCg1UaihK'),
-    ('tech@nician.com', 4, '$2b$12$A4PTGg5TFm1YecVbhgqviODRfu1SMOqnXQbk548kydUk6xBNaBzh.'),
-    ('of@ficer.com', 5, '$2b$12$s2hc9RGBLNj7SpasSGiZoOnW8zUkaLdfJRU0sr5K9xJk2NX1U32eS');
+    ('ci@tizen.com', 2, '$2b$12$XlKYOMIeQrVeiVd/vJNoq.yaqNw8i94V6njCGzL2aPL3F9NSpnofe'),
+    ('tech@nician.com', 3, '$2b$12$A4PTGg5TFm1YecVbhgqviODRfu1SMOqnXQbk548kydUk6xBNaBzh.'),
+    ('of@ficer.com', 4, '$2b$12$s2hc9RGBLNj7SpasSGiZoOnW8zUkaLdfJRU0sr5K9xJk2NX1U32eS');
 
 -- TICKETS
 INSERT INTO ticket (title, description, state, priority, authorId)
@@ -152,3 +150,6 @@ VALUES
     (   'Leaking hydrant',
         'The hydrant on the corner of Sample Street and Made-up Ave. is leaking water slowly.',
         'Open', 'Medium', 2);
+
+INSERT INTO service_request (description, priority, state, ticketId, technicianId, authorId)
+VALUES ('fix the lamp', 1, 1, 1, 3, 4);

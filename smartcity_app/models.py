@@ -150,7 +150,7 @@ class ServiceRequest(models.Model):
     id = models.AutoField(primary_key=True)
     description = models.CharField(max_length=255)
     created_timestamp = models.DateTimeField(blank=True, null=True, auto_now_add=True)
-    days_remaining = models.IntegerField(blank=True, null=True)
+    days_remaining = models.DateField(blank=True, null=True)
     price = models.IntegerField(blank=True, null=True)
     priority = models.CharField(max_length=7)
     state = models.CharField(max_length=11, blank=True, null=True)

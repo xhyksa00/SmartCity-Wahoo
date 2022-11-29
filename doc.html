@@ -39,7 +39,7 @@
     </ul>
 </dd>
 <dt>URL aplikace</dt>
-<dd><a href="smartcity-wahoo.herokuapp.com">smartcity-wahoo.herokuapp.com</a></dd>
+<dd><a href="https://smartcity-wahoo.herokuapp.com">smartcity-wahoo.herokuapp.com</a></dd>
 <!-- <dd>(pokud má aplikace více vstupních stránek, napište obdobně další URL)</dd> -->
 </dl>
 
@@ -58,7 +58,7 @@
 
 <h3>Video</h3>
 
-<p>Video uploadnuté na <a href="">študentskom drive</a></p>
+<p>Video uploadnuté na <a href="https://drive.google.com/drive/folders/14GFK55nNYeZAsnijyY1raZzdAPE9HIrX?usp=sharing">študentskom drive</a></p>
 
 <h2>Implementácia</h2>
 <p>
@@ -73,7 +73,7 @@
     V djangu sa formuláre definujú ako samostatné triedy, ktoré sa neskôr vložia do html predlôh. Formuláre sú definováne v zložke <i>forms/</i> a sú opäť rozdelené podľa kategórie dát.
     Spomínané html predlohy sú v zložke <i>templates/</i>. <br>
     Prepojenie url adries a ich korešpondujúcich view funkcí je definované v súbore <i>urls.py</i>.
-    Definície tried odrážájúce databázový model (modely) sú v automaticky generovanom súbore <i>models.py</i>.
+    Definície tried odrážájúce databázový model (modely) sú v automaticky generovanom a neskôr upravenom súbore <i>models.py</i>.
 </p>
 <h3>smartcity_admin</h3>
 <p>
@@ -123,7 +123,10 @@
 <small>disclaimer: env var DEBUG je nastavená na True kvôli jednoduchosti lokálneho testovania/vývoja, pretože Django vie spracovávať statické súbory iba v debug móde</small>
 
 <h2>Známe Problémy</h2>
-<p>Príliš neskoro sme si uvedomili, že Heroku nepodporuje nahrávanie súborov (v našom prípade obrázkov), a addony, ktoré to umožňujú, sú platené..</p>
+<ul>
+    <li>Príliš neskoro sme si uvedomili, že Heroku nepodporuje nahrávanie súborov (v našom prípade obrázkov). Lokálne to však funguje..</li>
+    <li>Predbežne sa ospravedlňujem za možnosť chýbajúceho videa, určite tam veľmi skoro bude, aktuálne sa však sústredíme na doladenie chýb..</li>
+</ul>
 
 </body>
 </html>
