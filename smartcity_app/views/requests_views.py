@@ -184,10 +184,10 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
             # else:
             #     assign_form.fields['technicianid'].initial = 'none'
 
-    is_assignee = False
+    allow_prio_change = False
     priority_form = {}
-    if currentUserData['id'] == serviceRequest.technicianid_id:
-        is_assignee = True
+    if (currentUserData['id'] == serviceRequest.technicianid_id) or (currentUserData['role'] == 'Officer'):
+        allow_prio_change = True
         if request.method == 'POST':
             priority_form = PriorityForm(request.POST)
             if priority_form.is_valid():
@@ -220,7 +220,7 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
         'currentUserData': currentUserData,
         'assign_form': assign_form,
         'priority_form': priority_form,
-        'is_assignee': is_assignee,
+        'allow_prio_change': allow_prio_change,
         'owner': owner,
         'comments' : fullComments,
         'commentsCount' : len(fullComments),

@@ -22,19 +22,24 @@
         <p>{{ ticket.description }}</p>
     </div>
     Date Created: <strong>{{ ticket.created_timestamp }}</strong> <br>
-    {%if ticket.priority == 'Lowest' %}
-        Priority: <strong class="text-success">{{ ticket.priority }}</strong> <br>
-    {% elif ticket.priority == 'Low' %}
-        Priority: <strong class="text-ifno">{{ ticket.priority }}</strong> <br>
-    {% elif ticket.priority == 'Medium' %}
-        Priority: <strong class="text-primary">{{ ticket.priority }}</strong> <br>
-    {% elif ticket.priority == 'High' %}
-        Priority: <strong class="text-warning">{{ ticket.priority }}</strong> <br>
+    {% if allow_prio_change %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        Priority: {{ priority_form.priority }}
+    </form>
     {% else %}
-        Priority: <strong class="text-danger">{{ ticket.priority }}</strong> <br>
+        {%if ticket.priority == 'Lowest' %}
+            Priority: <strong class="text-success">{{ ticket.priority }}</strong> <br>
+        {% elif ticket.priority == 'Low' %}
+            Priority: <strong class="text-ifno">{{ ticket.priority }}</strong> <br>
+        {% elif ticket.priority == 'Medium' %}
+            Priority: <strong class="text-primary">{{ ticket.priority }}</strong> <br>
+        {% elif ticket.priority == 'High' %}
+            Priority: <strong class="text-warning">{{ ticket.priority }}</strong> <br>
+        {% else %}
+            Priority: <strong class="text-danger">{{ ticket.priority }}</strong> <br>
+        {% endif %}
     {% endif %}
-
-    
     Author: 
     {% if ticket.authorid %}
         <a href="{% url 'user-view' id=ticket.authorid_id %}">{{ ticket.authorid.name }} {{ ticket.authorid.surname }} </a><br>

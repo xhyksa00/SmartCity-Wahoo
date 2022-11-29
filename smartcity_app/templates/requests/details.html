@@ -19,7 +19,7 @@
     {{ serviceRequest.description }}
     </div>
     Date Created: <strong>{{ serviceRequest.created_timestamp }} </strong><br>
-    {% if is_assignee %}
+    {% if allow_prio_change %}
     <form action="" method="POST">
         {% csrf_token %}
         Priority: {{ priority_form.priority }}

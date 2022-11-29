@@ -105,14 +105,30 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
             comment.authorid_id = currentUserData['id']
             comment.save()
             messages.success(request,'Comment added.')
-        if 'priority' in request.POST:
-            priorityFormPOST = PriorityForm(request.POST)
-            if priorityFormPOST.is_valid():
-                ticket.priority = priorityFormPOST.cleaned_data['priority']
+        # if 'priority' in request.POST:
+        #     priorityFormPOST = PriorityForm(request.POST)
+        #     if priorityFormPOST.is_valid():
+        #         ticket.priority = priorityFormPOST.cleaned_data['priority']
+        #         ticket.save()
+
+    # priorityForm = PriorityForm()
+    # priorityForm.fields['priority'].initial = ticket.priority
+
+    allow_prio_change = False
+    priority_form = {}
+    if (currentUserData['id'] == ticket.authorid_id) or (currentUserData['role'] == 'Officer'):
+        allow_prio_change = True
+        if request.method == 'POST':
+            priority_form = PriorityForm(request.POST)
+            if priority_form.is_valid():
+                ticket.priority = priority_form.cleaned_data['priority']
                 ticket.save()
 
-    priorityForm = PriorityForm()
-    priorityForm.fields['priority'].initial = ticket.priority
+                messages.success(request,'Priority changed.')
+                return HttpResponseRedirect(f'/tickets/list/{id}/')
+        else:
+            priority_form = PriorityForm(instance=ticket)
+
     comments = TicketComments.objects.filter( ticketid_id = id).all()
     fullComments = []
     for comment in comments:
@@ -134,13 +150,18 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
         'serviceRequest': serviceRequest,
         'currentUserData': currentUserData,
         'images': images,
-        'owner': owner
+        'owner': owner,
+        'comments': fullComments,
+        'commentsCount': len(fullComments),
+        'comment_form': CommentForm(),
+        'priority_form': priority_form,
+        'allow_prio_change': allow_prio_change,
     }
 
-    context['comments'] = fullComments
-    context['commentsCount'] = len(fullComments)
-    context['comment_form'] = CommentForm()
-    context['priority_form'] = priorityForm
+    # context['comments'] = fullComments
+    # context['commentsCount'] = len(fullComments)
+    # context['comment_form'] = CommentForm()
+    # context['priority_form'] = priority_form
 
     return render(request, 'tickets/details.html', context)
 

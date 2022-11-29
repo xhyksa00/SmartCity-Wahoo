@@ -52,17 +52,20 @@ class CommentForm(forms.ModelForm):
             }),
         }
 
-class PriorityForm(forms.Form):
+class PriorityForm(forms.ModelForm):
     class Meta:
+        model = Ticket
         fields = ['priority']
-        choices = [('Lowest','Lowest'),('Low','Low'),('Medium','Medium'),('High','High'),('Highest','Highest')]
 
-    priority = forms.ChoiceField(choices=Meta.choices)
+    priority = forms.ChoiceField()
 
     def __init__(self, *args, **kwargs):
         super(PriorityForm, self).__init__(*args, **kwargs)
-        for fieldName in self.Meta.fields:
-            self.fields[fieldName].widget.attrs['onchange'] =  'this.form.submit()'
+        choices = [('Lowest','Lowest'),('Low','Low'),('Medium','Medium'),('High','High'),('Highest','Highest')]
+
+        self.fields['priority'].widget.choices = choices
+        self.fields['priority'].widget.required = False
+        self.fields['priority'].widget.attrs['onchange'] = 'this.form.submit()'
 
 class TicketFilterForm(forms.Form):
     class Meta:
