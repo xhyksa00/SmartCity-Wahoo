@@ -97,6 +97,25 @@ class ExpectedDateForm(forms.ModelForm):
         self.fields['days_remaining'].widget.attrs['onchange'] = 'this.form.submit()'
         self.fields['days_remaining'].widget.attrs['type'] = 'date'
 
+class ChangeStateForm(forms.ModelForm):
+    class Meta:
+        model = ServiceRequest
+        fields = ['state']
+
+    state = forms.ChoiceField()
+
+    def __init__(self, *args, **kwargs):
+        super(ChangeStateForm, self).__init__(*args, **kwargs)
+
+        state_choices = [
+            ('Open', 'Open'),
+            ('In Progress', 'In Progress'),
+            ('Finished', 'Finished'),
+        ]
+
+        self.fields['state'].widget.choices = state_choices
+        self.fields['state'].widget.required = False
+        self.fields['state'].widget.attrs['onchange'] = 'this.form.submit()'
 
 class AssignTechnicianForm(forms.ModelForm):
     class Meta:

@@ -30,6 +30,29 @@ class CreateTicketForm(forms.ModelForm):
             }),
         }
 
+class ChangeStateForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['state']
+
+    state = forms.ChoiceField()
+
+    def __init__(self, *args, **kwargs):
+        super(ChangeStateForm, self).__init__(*args, **kwargs)
+
+        state_choices = [
+            ('Open', 'Open'),
+            ('Waiting', 'Waiting'),
+            ('In Progress', 'In Progress'),
+            ('Closed: Denied', 'Closed: Denied'),
+            ('Closed: Fixed', 'Closed: Fixed'),
+            ('Closed: Duplicate', 'Closed: Duplicate'),
+        ]
+
+        self.fields['state'].widget.choices = state_choices
+        self.fields['state'].widget.required = False
+        self.fields['state'].widget.attrs['onchange'] = 'this.form.submit()'
+
 class UploadImageForm(forms.ModelForm):
     class Meta:
         model = Image

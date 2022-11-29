@@ -71,6 +71,10 @@
         {% csrf_token %}
         Estimated Expenses: {{ estimated_price_form.price }},- Kč
     </form>
+    <form action="" method="POST">
+        {% csrf_token %}
+        Status: {{ state_change_form.state }}
+    </form>
     {% else %}
     Expected Completion Date: {{ serviceRequest.days_remaining }} <br>
     Estimated Expenses: {{ serviceRequest.price }},- Kč <br>

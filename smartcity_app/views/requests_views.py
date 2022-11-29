@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from ..models import Ticket, User, ServiceRequest, ServiceRequestComments
 from .helpers import getCurrentUserDict, getLoggedUserObject, CommentFull
 from django.contrib import messages
-from ..forms.request_forms import CreateRequestForm, AssignTechnicianForm, ServiceRCommentForm, RequestFilterForm, PriorityForm, ExpectedDateForm, EstimatedPriceForm
+from ..forms.request_forms import CreateRequestForm, AssignTechnicianForm, ServiceRCommentForm, RequestFilterForm, PriorityForm, ExpectedDateForm, EstimatedPriceForm, ChangeStateForm
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
 
@@ -200,6 +200,7 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
     allow_tech_changes = False
     expected_date_form = {}
     estimated_price_form = {}
+    state_change_form = {}
     if (currentUserData['id'] == serviceRequest.technicianid_id):
         allow_tech_changes = True
         if request.method == 'POST':
@@ -221,10 +222,19 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
                     messages.success(request,'Expected completion date changed.')
                     return HttpResponseRedirect(f'/requests/list/{id}/')
             
+            elif 'state' in request.POST:
+                state_change_form = ChangeStateForm(request.POST)
+                if state_change_form.is_valid():
+                    serviceRequest.state = state_change_form.cleaned_data['state']
+                    serviceRequest.save()
+
+                    messages.success(request,'Status changed.')
+                    return HttpResponseRedirect(f'/requests/list/{id}/')
 
         else:
             expected_date_form = ExpectedDateForm(instance=serviceRequest)
             estimated_price_form = EstimatedPriceForm(instance=serviceRequest)
+            state_change_form = ChangeStateForm(instance=serviceRequest)
 
     owner = (serviceRequest.authorid_id == currentUserData['id'])
     comments = ServiceRequestComments.objects.filter(requestid_id = id).all()
@@ -252,6 +262,7 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
         'allow_tech_changes': allow_tech_changes,
         'expected_date_form': expected_date_form,
         'estimated_price_form': estimated_price_form,
+        'state_change_form': state_change_form,
         'comments' : fullComments,
         'commentsCount' : len(fullComments),
         'comment_form' : ServiceRCommentForm()
@@ -299,7 +310,7 @@ def create_request(request: HttpRequest, ticket_id: int = -1) -> HttpResponse:
 
     return render(request, 'requests/create.html', context)
 
-# TODO:FIXME:
+
 def edit_request(request: HttpRequest, id:int) -> HttpResponse:
     currentUserData = getCurrentUserDict(request)
     if currentUserData == {}:

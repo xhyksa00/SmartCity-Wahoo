@@ -22,6 +22,12 @@
         <p>{{ ticket.description }}</p>
     </div>
     Date Created: <strong>{{ ticket.created_timestamp }}</strong> <br>
+    {% if allow_state_change %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        Status: {{ state_change_form.state }}
+    </form>
+    {% endif %}
     {% if allow_prio_change %}
     <form action="" method="POST">
         {% csrf_token %}

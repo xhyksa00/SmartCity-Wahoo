@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from ..models import Ticket, User, ServiceRequest, Image, TicketComments
 from .helpers import getCurrentUserDict, getLoggedUserObject, CommentFull
 from django.contrib import messages
-from ..forms.ticket_forms import CreateTicketForm, UploadImageForm, CommentForm, PriorityForm, TicketFilterForm
+from ..forms.ticket_forms import CreateTicketForm, UploadImageForm, CommentForm, PriorityForm, TicketFilterForm, ChangeStateForm
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
 
@@ -114,6 +114,25 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
     # priorityForm = PriorityForm()
     # priorityForm.fields['priority'].initial = ticket.priority
 
+    allow_state_change = False
+    state_change_form = {}
+
+    if (currentUserData['role'] == 'Officer'):
+        allow_state_change = True
+        if request.method == 'POST' and 'state' in request.POST:
+            if request.method == 'POST':
+                state_change_form = ChangeStateForm(request.POST)
+                if state_change_form.is_valid():
+                    ticket.state = state_change_form.cleaned_data['state']
+                    # print(state_change_form.cleaned_data['state'])
+                    # print(ticket.state)
+                    ticket.save()
+
+                    messages.success(request,'State changed.')
+                    return HttpResponseRedirect(f'/tickets/list/{id}/')
+    else:
+        state_change_form = ChangeStateForm(instance=ticket)
+
     allow_prio_change = False
     priority_form = {}
     if (currentUserData['id'] == ticket.authorid_id) or (currentUserData['role'] == 'Officer'):
@@ -128,6 +147,8 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
                 return HttpResponseRedirect(f'/tickets/list/{id}/')
         else:
             priority_form = PriorityForm(instance=ticket)
+
+    
 
     comments = TicketComments.objects.filter( ticketid_id = id).all()
     fullComments = []
@@ -155,7 +176,9 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
         'commentsCount': len(fullComments),
         'comment_form': CommentForm(),
         'priority_form': priority_form,
+        'state_change_form': ChangeStateForm(instance=ticket),
         'allow_prio_change': allow_prio_change,
+        'allow_state_change': allow_state_change,
     }
 
     # context['comments'] = fullComments
