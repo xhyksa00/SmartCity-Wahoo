@@ -97,47 +97,22 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
     serviceRequest = ServiceRequest.objects.filter(ticketid = id).all().first()
     images = Image.objects.filter(ticketid=ticket.id).all()
 
+    allow_state_change = (currentUserData['role'] == 'Officer')
+    allow_prio_change = (currentUserData['role'] == 'Officer')
+
+    state_change_form = ChangeStateForm(instance=ticket)
+    priority_form = PriorityForm(instance=ticket)
+
     if request.method == 'POST':
-        if 'text' in request.POST:
-            commentForm = CommentForm(request.POST)
-            comment = commentForm.save(commit=False)
-            comment.ticketid_id = id
-            comment.authorid_id = currentUserData['id']
-            comment.save()
-            messages.success(request,'Comment added.')
-        # if 'priority' in request.POST:
-        #     priorityFormPOST = PriorityForm(request.POST)
-        #     if priorityFormPOST.is_valid():
-        #         ticket.priority = priorityFormPOST.cleaned_data['priority']
-        #         ticket.save()
+        if 'state' in request.POST:
+            state_change_form = ChangeStateForm(request.POST)
+            if state_change_form.is_valid():
+                ticket.state = state_change_form.cleaned_data['state']
+                ticket.save()
 
-    # priorityForm = PriorityForm()
-    # priorityForm.fields['priority'].initial = ticket.priority
-
-    allow_state_change = False
-    state_change_form = {}
-
-    if (currentUserData['role'] == 'Officer'):
-        allow_state_change = True
-        if request.method == 'POST' and 'state' in request.POST:
-            if request.method == 'POST':
-                state_change_form = ChangeStateForm(request.POST)
-                if state_change_form.is_valid():
-                    ticket.state = state_change_form.cleaned_data['state']
-                    # print(state_change_form.cleaned_data['state'])
-                    # print(ticket.state)
-                    ticket.save()
-
-                    messages.success(request,'State changed.')
-                    return HttpResponseRedirect(f'/tickets/list/{id}/')
-    else:
-        state_change_form = ChangeStateForm(instance=ticket)
-
-    allow_prio_change = False
-    priority_form = {}
-    if (currentUserData['id'] == ticket.authorid_id) or (currentUserData['role'] == 'Officer'):
-        allow_prio_change = True
-        if request.method == 'POST':
+                messages.success(request,'State changed.')
+                return HttpResponseRedirect(f'/tickets/list/{id}/')
+        if 'priority' in request.POST:
             priority_form = PriorityForm(request.POST)
             if priority_form.is_valid():
                 ticket.priority = priority_form.cleaned_data['priority']
@@ -145,10 +120,13 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
 
                 messages.success(request,'Priority changed.')
                 return HttpResponseRedirect(f'/tickets/list/{id}/')
-        else:
-            priority_form = PriorityForm(instance=ticket)
-
-    
+        if 'text' in request.POST:
+            commentForm = CommentForm(request.POST)
+            comment = commentForm.save(commit=False)
+            comment.ticketid_id = id
+            comment.authorid_id = currentUserData['id']
+            comment.save()
+            messages.success(request,'Comment added.')
 
     comments = TicketComments.objects.filter( ticketid_id = id).all()
     fullComments = []
@@ -176,15 +154,10 @@ def show_ticket(request: HttpRequest, id:int) -> HttpResponse:
         'commentsCount': len(fullComments),
         'comment_form': CommentForm(),
         'priority_form': priority_form,
-        'state_change_form': ChangeStateForm(instance=ticket),
+        'state_change_form': state_change_form,
         'allow_prio_change': allow_prio_change,
         'allow_state_change': allow_state_change,
     }
-
-    # context['comments'] = fullComments
-    # context['commentsCount'] = len(fullComments)
-    # context['comment_form'] = CommentForm()
-    # context['priority_form'] = priority_form
 
     return render(request, 'tickets/details.html', context)
 

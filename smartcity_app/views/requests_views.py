@@ -154,39 +154,26 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
         return HttpResponseRedirect('/')
 
     serviceRequest = ServiceRequest.objects.filter(id=id).select_related('authorid','technicianid').all().first()
-    print(serviceRequest.authorid)
-    assign_form = {}
-    if currentUserData['role'] == 'Officer':
-        # technician = serviceRequest.technicianid
-        if request.method == 'POST':
-            if 'technicianid' in request.POST:
-                assign_form = AssignTechnicianForm(request.POST)
-                if assign_form.is_valid():
-                    serviceRequest.technicianid = assign_form.cleaned_data['technicianid']
-                    serviceRequest.save()
 
-                    messages.success(request,'Technician assigned.')
-                    return HttpResponseRedirect(f'/requests/list/{id}/')
-            else:
-                commentForm = ServiceRCommentForm(request.POST)
-                comment = commentForm.save(commit=False)
-                comment.requestid_id = id
-                comment.authorid_id = currentUserData['id']
-                comment.save()
-                messages.success(request,'Comment added.')
-                assign_form = AssignTechnicianForm(instance=serviceRequest)
-        else:
-            assign_form = AssignTechnicianForm(instance=serviceRequest)
-            # if serviceRequest.technicianid:
-            #     assign_form.fields['technicianid'].initial = serviceRequest.technicianid.name + ' ' + serviceRequest.technicianid.surname
-            # else:
-            #     assign_form.fields['technicianid'].initial = 'none'
+    allow_prio_change = (currentUserData['id'] == serviceRequest.technicianid_id) or (currentUserData['role'] == 'Officer')
+    allow_tech_changes = (currentUserData['id'] == serviceRequest.technicianid_id)
 
-    allow_prio_change = False
-    priority_form = {}
-    if (currentUserData['id'] == serviceRequest.technicianid_id) or (currentUserData['role'] == 'Officer'):
-        allow_prio_change = True
-        if request.method == 'POST':
+    assign_form = AssignTechnicianForm(instance=serviceRequest)
+    priority_form = PriorityForm(instance=serviceRequest)
+    estimated_price_form = EstimatedPriceForm(instance=serviceRequest)
+    expected_date_form = ExpectedDateForm(instance=serviceRequest)
+    state_change_form = ChangeStateForm(instance=serviceRequest)
+
+    if request.method == 'POST':
+        if 'technicianid' in request.POST:
+            assign_form = AssignTechnicianForm(request.POST)
+            if assign_form.is_valid():
+                serviceRequest.technicianid = assign_form.cleaned_data['technicianid']
+                serviceRequest.save()
+
+                messages.success(request,'Technician assigned.')
+                return HttpResponseRedirect(f'/requests/list/{id}/')
+        elif 'priority' in request.POST:
             priority_form = PriorityForm(request.POST)
             if priority_form.is_valid():
                 serviceRequest.priority = priority_form.cleaned_data['priority']
@@ -194,47 +181,38 @@ def show_request(request: HttpRequest, id:int) -> HttpResponse:
 
                 messages.success(request,'Priority changed.')
                 return HttpResponseRedirect(f'/requests/list/{id}/')
+        elif 'price' in request.POST:
+            estimated_price_form = EstimatedPriceForm(request.POST)
+            if estimated_price_form.is_valid():
+                serviceRequest.price = estimated_price_form.cleaned_data['price']
+                serviceRequest.save()
+
+                messages.success(request,'Estimated price changed.')
+                return HttpResponseRedirect(f'/requests/list/{id}/')
+        elif 'days_remaining' in request.POST:
+            expected_date_form = ExpectedDateForm(request.POST)
+            if expected_date_form.is_valid():
+                serviceRequest.days_remaining = expected_date_form.cleaned_data['days_remaining']
+                serviceRequest.save()
+
+                messages.success(request,'Expected completion date changed.')
+                return HttpResponseRedirect(f'/requests/list/{id}/')
+        elif 'state' in request.POST:
+            state_change_form = ChangeStateForm(request.POST)
+            if state_change_form.is_valid():
+                serviceRequest.state = state_change_form.cleaned_data['state']
+                serviceRequest.save()
+
+                messages.success(request,'Status changed.')
+                return HttpResponseRedirect(f'/requests/list/{id}/')
         else:
-            priority_form = PriorityForm(instance=serviceRequest)
-
-    allow_tech_changes = False
-    expected_date_form = {}
-    estimated_price_form = {}
-    state_change_form = {}
-    if (currentUserData['id'] == serviceRequest.technicianid_id):
-        allow_tech_changes = True
-        if request.method == 'POST':
-            if 'price' in request.POST:
-                estimated_price_form = EstimatedPriceForm(request.POST)
-                if estimated_price_form.is_valid():
-                    serviceRequest.price = estimated_price_form.cleaned_data['price']
-                    serviceRequest.save()
-
-                    messages.success(request,'Estimated price changed.')
-                    return HttpResponseRedirect(f'/requests/list/{id}/')
-
-            elif 'days_remaining' in request.POST:
-                expected_date_form = ExpectedDateForm(request.POST)
-                if expected_date_form.is_valid():
-                    serviceRequest.days_remaining = expected_date_form.cleaned_data['days_remaining']
-                    serviceRequest.save()
-
-                    messages.success(request,'Expected completion date changed.')
-                    return HttpResponseRedirect(f'/requests/list/{id}/')
-            
-            elif 'state' in request.POST:
-                state_change_form = ChangeStateForm(request.POST)
-                if state_change_form.is_valid():
-                    serviceRequest.state = state_change_form.cleaned_data['state']
-                    serviceRequest.save()
-
-                    messages.success(request,'Status changed.')
-                    return HttpResponseRedirect(f'/requests/list/{id}/')
-
-        else:
-            expected_date_form = ExpectedDateForm(instance=serviceRequest)
-            estimated_price_form = EstimatedPriceForm(instance=serviceRequest)
-            state_change_form = ChangeStateForm(instance=serviceRequest)
+            commentForm = ServiceRCommentForm(request.POST)
+            comment = commentForm.save(commit=False)
+            comment.requestid_id = id
+            comment.authorid_id = currentUserData['id']
+            comment.save()
+            messages.success(request,'Comment added.')
+            assign_form = AssignTechnicianForm(instance=serviceRequest)
 
     owner = (serviceRequest.authorid_id == currentUserData['id'])
     comments = ServiceRequestComments.objects.filter(requestid_id = id).all()

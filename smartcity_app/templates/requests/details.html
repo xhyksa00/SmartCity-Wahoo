@@ -64,7 +64,6 @@
     {% if allow_tech_changes %}
     <form action="" method="POST">
         {% csrf_token %}
-        <!-- <input type="date"> -->
         Expected Completion Date: {{ expected_date_form.days_remaining }}
     </form>
     <form action="" method="POST">

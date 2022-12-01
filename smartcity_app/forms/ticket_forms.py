@@ -35,22 +35,21 @@ class ChangeStateForm(forms.ModelForm):
         model = Ticket
         fields = ['state']
 
-    state = forms.ChoiceField()
-
-    def __init__(self, *args, **kwargs):
-        super(ChangeStateForm, self).__init__(*args, **kwargs)
-
         state_choices = [
             ('Open', 'Open'),
-            ('Waiting', 'Waiting'),
+            ('Waiting For Approval', 'Waiting'),
             ('In Progress', 'In Progress'),
             ('Closed: Denied', 'Closed: Denied'),
             ('Closed: Fixed', 'Closed: Fixed'),
             ('Closed: Duplicate', 'Closed: Duplicate'),
         ]
+    state = forms.ChoiceField(choices=Meta.state_choices)
 
-        self.fields['state'].widget.choices = state_choices
-        self.fields['state'].widget.required = False
+    def __init__(self, *args, **kwargs):
+        super(ChangeStateForm, self).__init__(*args, **kwargs)
+
+
+        # self.fields['state'].widget.choices = state_choices
         self.fields['state'].widget.attrs['onchange'] = 'this.form.submit()'
 
 class UploadImageForm(forms.ModelForm):
@@ -79,15 +78,19 @@ class PriorityForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = ['priority']
+        prio_choices = [
+            ('Lowest','Lowest'),
+            ('Low','Low'),
+            ('Medium','Medium'),
+            ('High','High'),
+            ('Highest','Highest')
+        ]
 
-    priority = forms.ChoiceField()
+    priority = forms.ChoiceField(choices=Meta.prio_choices)
 
     def __init__(self, *args, **kwargs):
         super(PriorityForm, self).__init__(*args, **kwargs)
-        choices = [('Lowest','Lowest'),('Low','Low'),('Medium','Medium'),('High','High'),('Highest','Highest')]
 
-        self.fields['priority'].widget.choices = choices
-        self.fields['priority'].widget.required = False
         self.fields['priority'].widget.attrs['onchange'] = 'this.form.submit()'
 
 class TicketFilterForm(forms.Form):

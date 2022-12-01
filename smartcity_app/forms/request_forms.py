@@ -58,15 +58,19 @@ class PriorityForm(forms.ModelForm):
     class Meta:
         model = ServiceRequest
         fields = ['priority']
+        prio_choices = [
+            ('Lowest','Lowest'),
+            ('Low','Low'),
+            ('Medium','Medium'),
+            ('High','High'),
+            ('Highest','Highest')
+        ]
 
-    priority = forms.ChoiceField()
+    priority = forms.ChoiceField(choices=Meta.prio_choices)
 
     def __init__(self, *args, **kwargs):
         super(PriorityForm, self).__init__(*args, **kwargs)
-        choices = [('Lowest','Lowest'),('Low','Low'),('Medium','Medium'),('High','High'),('Highest','Highest')]
 
-        self.fields['priority'].widget.choices = choices
-        self.fields['priority'].widget.required = False
         self.fields['priority'].widget.attrs['onchange'] = 'this.form.submit()'
 
 class EstimatedPriceForm(forms.ModelForm):
@@ -101,20 +105,18 @@ class ChangeStateForm(forms.ModelForm):
     class Meta:
         model = ServiceRequest
         fields = ['state']
-
-    state = forms.ChoiceField()
-
-    def __init__(self, *args, **kwargs):
-        super(ChangeStateForm, self).__init__(*args, **kwargs)
-
         state_choices = [
             ('Open', 'Open'),
             ('In Progress', 'In Progress'),
             ('Finished', 'Finished'),
         ]
 
-        self.fields['state'].widget.choices = state_choices
-        self.fields['state'].widget.required = False
+    state = forms.ChoiceField(choices=Meta.state_choices)
+
+    def __init__(self, *args, **kwargs):
+        super(ChangeStateForm, self).__init__(*args, **kwargs)
+
+
         self.fields['state'].widget.attrs['onchange'] = 'this.form.submit()'
 
 class AssignTechnicianForm(forms.ModelForm):

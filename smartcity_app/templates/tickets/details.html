@@ -8,7 +8,7 @@
     <span class="badge bg-danger"> {{ ticket.state }} </span>
     {% elif ticket.state == 'Closed: Fixed' %}
     <span class="badge bg-success"> {{ ticket.state }} </span>
-    {% elif ticket.state == 'Waiting' %}
+    {% elif ticket.state == 'Waiting For Approval' %}
     <span class="badge bg-secondary"> {{ ticket.state }} </span>
     {% elif ticket.state == 'In Progress' %}
     <span class="badge bg-warning"> {{ ticket.state }} </span>
