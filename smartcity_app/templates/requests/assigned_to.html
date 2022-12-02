@@ -19,7 +19,7 @@
     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
       data-bs-parent="#accordionFilter">
       <div class="accordion-body">
-        <form action="{% url 'request-created-by' assignee_id=assignee.id %}" method="GET" class="row g-3" id="filter">
+        <form action="{% url 'request-assigned-to' assignee_id=assignee.id %}" method="GET" class="row g-3" id="filter">
           <div class="fieldWrapper col-md-6">
             <!-- <label for="{{ filter_form.name.id_for_label }}">Name:</label> -->
             {{ filter_form.search.label_tag }}
