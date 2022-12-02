@@ -123,18 +123,18 @@ class AssignTechnicianForm(forms.ModelForm):
     class Meta:
         model = ServiceRequest
         fields = ['technicianid']
-        
-    technicianid = forms.ChoiceField()
+        choices = [('', '-----------')]
+        technicnains = User.objects.filter(role='Technician').all()
+        for tech in technicnains:
+            choices.append((tech.id, '(#' + f'{tech.id}' + ') ' + tech.name + ' ' + tech.surname))
+    technicianid = forms.TypedChoiceField(coerce=User,choices=Meta.choices)
 
     def __init__(self, *args, **kwargs):
         super(AssignTechnicianForm, self).__init__(*args, **kwargs)
         
-        choices = [('', '-----------')]
-        technicnains = User.objects.filter(role='Technician').all()
-        for tech in technicnains:
-            choices.append(tuple((tech.id, '(#' + f'{tech.id}' + ') ' + tech.name + ' ' + tech.surname)))
+        
 
-        self.fields['technicianid'].widget.choices = choices
+        # self.fields['technicianid'].widget.choices = self.Meta.choices
         self.fields['technicianid'].widget.required = False
         self.fields['technicianid'].widget.attrs['onchange'] = 'this.form.submit()'
 
