@@ -169,7 +169,7 @@ def editProfile(request, id):
     else:
         a = User.objects.filter(id = id).all().first()
         form = EditAccountForm(instance=a)
-        context['currentUserData']= currentUserData,
+        context['currentUserData']= currentUserData
         context['form']= form
 
         return render(request,'user/simpleForm.html',context)
