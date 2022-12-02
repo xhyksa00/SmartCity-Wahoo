@@ -19,7 +19,7 @@
     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
       data-bs-parent="#accordionFilter">
       <div class="accordion-body">
-        <form action="." method="GET" class="row g-3" id="filter">
+        <form action="{% url 'ticket-created-by' author_id=author.id %}" method="GET" class="row g-3" id="filter">
           <div class="fieldWrapper col-md-6">
             <!-- <label for="{{ filter_form.name.id_for_label }}">Name:</label> -->
             {{ filter_form.search.label_tag }}
@@ -53,7 +53,7 @@
           </div>
         </form>
         <div class="col-3  mt-2">
-          <a href="{% url 'ticket-list' %}"> <button class="btn btn-outline-primary me-3">Reset filters</button></a>
+          <a href="{% url 'ticket-created-by' author_id=author.id %}"> <button class="btn btn-outline-primary me-3">Reset filters</button></a>
         </div>
       </div>
     </div>
